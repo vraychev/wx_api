@@ -1,6 +1,8 @@
 package com.piggsoft.event;
 
+import com.alibaba.fastjson.JSON;
 import com.piggsoft.listener.WXEventListener;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.OrderComparator;
 import org.springframework.util.ObjectUtils;
@@ -13,13 +15,18 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 
 /**
- * Created by user on 2015/11/16.
+ * 事件分发器
+ * <br/> 分发接收的被动消息和事件
+ * <br/> 仿造Spring的事件分发器
+ * <br/> Created by piggsoft on 2015/11/16.
  */
 public class EventMulticaster {
 
 
-
-    private final ListenerRetriever defaultRetriever = new ListenerRetriever(false);
+    /**
+     * 监听犬
+     */
+    private final ListenerRetriever defaultRetriever = new ListenerRetriever();
 
     private final Map<ListenerCacheKey, ListenerRetriever> retrieverCache =
             new ConcurrentHashMap<ListenerCacheKey, ListenerRetriever>(64);
@@ -45,6 +52,17 @@ public class EventMulticaster {
         }
     }
 
+    public WXEventListener getApplicationListener(WXEvent weEvent) {
+        Collection<WXEventListener> listeners = getApplicationListeners(weEvent);
+        if (CollectionUtils.isEmpty(listeners)) {
+            return null;
+        }
+        if (listeners.size() > 1) {
+            throw new RuntimeException("too many listener on Event : " + JSON.toJSONString(weEvent));
+        }
+        return listeners.iterator().next();
+    }
+
     public Collection<WXEventListener> getApplicationListeners(WXEvent weEvent) {
         Class<? extends WXEvent> eventType = weEvent.getClass();
         Object source = weEvent.getSource();
@@ -55,7 +73,7 @@ public class EventMulticaster {
             return retriever.getWxEventListeners();
         }
         else {
-            retriever = new ListenerRetriever(true);
+            retriever = new ListenerRetriever();
             LinkedList<WXEventListener> allListeners = new LinkedList<WXEventListener>();
             Set<WXEventListener> listeners;
             synchronized (this.defaultRetriever) {
@@ -106,15 +124,16 @@ public class EventMulticaster {
         }
     }
 
+    /**
+     * 检索器
+     * <br> 对listener进行处理
+     */
     private class ListenerRetriever {
 
         public final Set<WXEventListener> wxEventListeners;
 
-        private final boolean preFiltered;
-
-        public ListenerRetriever(boolean preFiltered) {
+        public ListenerRetriever() {
             this.wxEventListeners = new LinkedHashSet<WXEventListener>();
-            this.preFiltered = preFiltered;
         }
 
         public Collection<WXEventListener> getWxEventListeners() {
