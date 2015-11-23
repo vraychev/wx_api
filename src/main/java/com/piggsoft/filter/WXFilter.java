@@ -9,6 +9,7 @@ import com.piggsoft.utils.ConfigUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
@@ -92,7 +93,11 @@ public class WXFilter implements Filter {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("事件处理后返回的结果为： {}", JSON.toJSONString(response));
         }
-        JAXB.marshal(response, servletResponse.getOutputStream());
+        if (response != null) {
+            JAXB.marshal(response, servletResponse.getOutputStream());
+        } else {
+            servletResponse.getOutputStream().print("");
+        }
     }
 
     public void destroy() {
