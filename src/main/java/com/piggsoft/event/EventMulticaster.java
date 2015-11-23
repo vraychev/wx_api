@@ -48,6 +48,11 @@ public class EventMulticaster {
         }
     }
 
+    /**
+     * 本次环境中一个event指允许一个监听
+     * @param weEvent
+     * @return
+     */
     public WXEventListener getApplicationListener(WXEvent weEvent) {
         Collection<WXEventListener> listeners = getApplicationListeners(weEvent);
         if (CollectionUtils.isEmpty(listeners)) {
