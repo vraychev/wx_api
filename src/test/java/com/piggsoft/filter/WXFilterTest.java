@@ -54,7 +54,7 @@ public class WXFilterTest {
     }
 
     private void refreshContext() throws IOException {
-        final InputStream in = ResourceUtils.getURL("classpath:a.xml").openStream();
+        final InputStream in = ResourceUtils.getURL("classpath:test.xml").openStream();
         expect(mockRequest.getInputStream())
                 .andReturn(new ServletInputStream() {
                     @Override
