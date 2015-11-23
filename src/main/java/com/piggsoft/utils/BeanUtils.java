@@ -1,6 +1,9 @@
 package com.piggsoft.utils;
 
 import org.apache.commons.beanutils.BeanMap;
+import org.apache.commons.lang3.ClassUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
@@ -16,6 +19,8 @@ import java.util.Map;
  */
 public class BeanUtils {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(BeanUtils.class);
+
     public static Map<String, Object> beanToMap(Object obj) {
         Map<String, Object> result = new HashMap<String, Object>();
         try {
@@ -29,11 +34,11 @@ public class BeanUtils {
                     result.put(pd.getName(), reader.invoke(obj));
             }
         } catch (IntrospectionException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return result;
     }
@@ -44,13 +49,33 @@ public class BeanUtils {
             t = clazz.newInstance();
             org.apache.commons.beanutils.BeanUtils.populate(t, map);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return t;
+    }
+
+    public static <T> T newInstance(Class clazz) {
+        try {
+            return (T)clazz.newInstance();
+        } catch (InstantiationException e) {
+            LOGGER.error(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
+    }
+
+    public static <T> T newInstance(String className) {
+        try {
+            return newInstance(ClassUtils.getClass(className));
+        } catch (ClassNotFoundException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
 }
