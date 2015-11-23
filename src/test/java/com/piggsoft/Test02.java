@@ -27,4 +27,9 @@ public class Test02 {
             }
         });
     }
+
+    @Test
+    public void test02() {
+
+    }
 }
