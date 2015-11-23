@@ -2,6 +2,7 @@ package com.piggsoft.event;
 
 import com.alibaba.fastjson.JSON;
 import com.piggsoft.listener.WXEventListener;
+import com.piggsoft.utils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.OrderComparator;
@@ -24,10 +25,13 @@ public class EventMulticaster {
 
 
     /**
-     * 监听犬
+     * 检索器监听
      */
     private final ListenerRetriever defaultRetriever = new ListenerRetriever();
 
+    /**
+     * 检索缓存
+     */
     private final Map<ListenerCacheKey, ListenerRetriever> retrieverCache =
             new ConcurrentHashMap<ListenerCacheKey, ListenerRetriever>(64);
 
@@ -40,15 +44,7 @@ public class EventMulticaster {
 
     public void addEventListenerBean(String listenerBeanName) {
         synchronized (this.defaultRetriever) {
-            try {
-                addEventListener((WXEventListener) Class.forName(listenerBeanName).newInstance());
-            } catch (ClassNotFoundException e) {
-                e.printStackTrace();
-            } catch (InstantiationException e) {
-                e.printStackTrace();
-            } catch (IllegalAccessException e) {
-                e.printStackTrace();
-            }
+            addEventListener((WXEventListener) BeanUtils.newInstance(listenerBeanName));
         }
     }
 
@@ -64,33 +60,41 @@ public class EventMulticaster {
     }
 
     public Collection<WXEventListener> getApplicationListeners(WXEvent weEvent) {
+        //事件的class
         Class<? extends WXEvent> eventType = weEvent.getClass();
+        //事件调用源
         Object source = weEvent.getSource();
+        //事件调用源的class
         Class<?> sourceType = (source != null ? source.getClass() : null);
         ListenerCacheKey cacheKey = new ListenerCacheKey(eventType, sourceType);
+        //尝试从缓存中读取
         ListenerRetriever retriever = this.retrieverCache.get(cacheKey);
         if (retriever != null) {
+            //一个检索管理下可能有多个Listener
             return retriever.getWxEventListeners();
-        }
-        else {
+        } else {
             retriever = new ListenerRetriever();
             LinkedList<WXEventListener> allListeners = new LinkedList<WXEventListener>();
             Set<WXEventListener> listeners;
             synchronized (this.defaultRetriever) {
+                //从默认检索管理中取出所有，准备进行对比
                 listeners = new LinkedHashSet<WXEventListener>(this.defaultRetriever.wxEventListeners);
             }
             for (WXEventListener listener : listeners) {
+                //当支持这个事件时
                 if (supportsEvent(listener, eventType, sourceType)) {
                     retriever.wxEventListeners.add(listener);
                     allListeners.add(listener);
                 }
             }
+            //权重排序
             OrderComparator.sort(allListeners);
             this.retrieverCache.put(cacheKey, retriever);
             return allListeners;
         }
     }
 
+    //是否支持该事件
     protected boolean supportsEvent(WXEventListener WXEventListener, Class<? extends WXEvent> eventType, Class<?> sourceType) {
         Class<?> typeArg = GenericTypeResolver.resolveTypeArgument(WXEventListener.getClass(), WXEventListener.class);
         return (typeArg == null || typeArg.isAssignableFrom(eventType));

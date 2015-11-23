@@ -120,7 +120,7 @@ public class ClassScaner implements ResourceLoaderAware {
   
     protected boolean matches(MetadataReader metadataReader) throws IOException {  
         for (TypeFilter tf : this.excludeFilters) {  
-            if (tf.match(metadataReader, this.metadataReaderFactory)) {  
+            if (tf.match(metadataReader, this.metadataReaderFactory)) {
                 return false;  
             }  
         }  

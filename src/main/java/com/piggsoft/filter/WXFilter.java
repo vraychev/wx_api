@@ -82,7 +82,7 @@ public class WXFilter implements Filter {
         WXEventListener listener = multicaster.getApplicationListener(event);
         if (listener == null) {
             if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("未找到对应的listener，返回");
+                LOGGER.debug("未找到对应的Listener，返回");
             }
             return;
         }

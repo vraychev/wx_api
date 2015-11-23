@@ -86,6 +86,7 @@ public class WXFilterTest {
         WXFilter wxFilter = new WXFilter();
         wxFilter.init(mockConfig);
         wxFilter.doFilter(mockRequest, mockResponse, mockFilterChain);
+
     }
 
 }

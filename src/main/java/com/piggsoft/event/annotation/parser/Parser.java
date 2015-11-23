@@ -89,7 +89,7 @@ public class Parser {
         }
         try {
             Object o = clazz.newInstance();
-            //将map的属性填入到bean中
+            //将map的
             BeanUtils.populate(o, msg);
             return (WXEvent)o;
         } catch (InstantiationException e) {

@@ -12,22 +12,56 @@ import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
+ * 配置工具类
+ * <br/>从xml或者properties文件中读取配置
  * Created by user on 2015/11/12.
  *
  */
 public class ConfigUtils {
-
-
+    /**
+     * 默认配置
+     */
     private static final String NAME_PATTERN = "classpath*:**/wx.properties";
-    private static Configuration configuration;
+    /**
+     * 配置文件缓存，通过pattern缓存
+     */
+    private static final Map<String, Configuration> CACHE = new HashMap<String, Configuration>();
+    /**
+     * lock
+     */
+    private static Object lock = new Object();
 
     static {
-        configuration = getConfig(NAME_PATTERN);
+        createConfiguration(NAME_PATTERN);
     }
 
+    /**
+     * 获取配置
+     * @param pattern
+     * @return
+     */
     public static Configuration getConfig(String pattern) {
+        if (StringUtils.isEmpty(pattern)) {
+            return null;
+        }
+        if (CACHE.containsKey(pattern)) {
+            return CACHE.get(pattern);
+        } else {
+            synchronized (lock) {
+                if (CACHE.containsKey(pattern)) {
+                    return CACHE.get(pattern);
+                } else {
+                    return createConfiguration(pattern);
+                }
+            }
+        }
+    }
+
+    protected static Configuration createConfiguration(String pattern) {
         Configuration configuration = null;
         try {
             Resource[] resources = new PathMatchingResourcePatternResolver().getResources(pattern);
@@ -46,6 +80,7 @@ public class ConfigUtils {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        CACHE.put(pattern, configuration);
         return configuration;
     }
 
@@ -59,6 +94,6 @@ public class ConfigUtils {
     }
 
     public static Configuration getConfig() {
-        return configuration;
+        return CACHE.get(NAME_PATTERN);
     }
 }
