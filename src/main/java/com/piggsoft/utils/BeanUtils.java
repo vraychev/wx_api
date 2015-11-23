@@ -43,16 +43,25 @@ public class BeanUtils {
         return result;
     }
 
-    public static <T> T mapToBean(Class<T> clazz, Map<String, ? extends Object> map) {
+    public static <T> T mapToBean(Class<T> clazz, Map<String, Object> map) {
         T t = null;
         try {
             t = clazz.newInstance();
+            mapToBean(t, map);
+        } catch (InstantiationException e) {
+            LOGGER.error(e.getMessage(), e);
+        } catch (IllegalAccessException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return t;
+    }
+
+    public static <T> T mapToBean(T t, Map<String, Object> map) {
+        try {
             org.apache.commons.beanutils.BeanUtils.populate(t, map);
         } catch (IllegalAccessException e) {
             LOGGER.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (InstantiationException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return t;

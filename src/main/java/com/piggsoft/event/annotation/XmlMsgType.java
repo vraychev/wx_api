@@ -17,10 +17,21 @@ import static java.lang.annotation.RetentionPolicy.RUNTIME;
 @Target({PACKAGE, TYPE})
 @Documented
 public @interface XmlMsgType {
-
+    /**
+     * 消息类型
+     * @return
+     */
     String msgType();
 
+    /**
+     * 事件类型
+     * @return
+     */
     String eventType() default "";
 
+    /**
+     * 事件条件（非空条件）
+     * @return
+     */
     String[] eventCondition() default {};
 }

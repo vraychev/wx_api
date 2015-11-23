@@ -8,6 +8,8 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
@@ -19,6 +21,8 @@ import java.util.Set;
  */
 public class Parser {
 
+    private static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
+
     public static final String EVENT_TYPE = "event";
 
     public static final Map<String, Class> cache = new HashMap<String, Class>();
@@ -29,23 +33,37 @@ public class Parser {
         initCache();
     }
 
+    /**
+     * 对报文进行解析
+     * @param content
+     * @return
+     */
     public static WXEvent parse(String content) {
         Map<String, String> msg = Xml2MapUtils.xml2Map(content);
         String msgType = msg.get("msgType");
         String eventType = msg.get("event");
         //是推送事件
-        if (EVENT_TYPE.equals(msgType) && StringUtils.isNotEmpty(eventType)) { //是推送事件，是消息
+        if (EVENT_TYPE.equals(msgType) && StringUtils.isNotEmpty(eventType)) {
             String[] event_conditions = event_condition_cache.get(eventType);
+            //根据事件类型和时间条件来判断具体是哪个事件
             Class clazz = getEventClass(msg, eventType, event_conditions);
             return createBean(clazz, msg);
 
         } else { //是消息
+            //从cache中取到对应的class
             Class clazz = cache.get(msgType);
             return createBean(clazz, msg);
 
         }
     }
 
+    /**
+     *
+     * @param msg 报文解析后的map
+     * @param eventType 事件类型
+     * @param event_conditions 事件条件
+     * @return 对应的事件
+     */
     private static Class getEventClass(Map<String, String> msg, String eventType, String[] event_conditions) {
         if (ArrayUtils.isNotEmpty(event_conditions)) {
             boolean isValidate = true;
@@ -71,14 +89,15 @@ public class Parser {
         }
         try {
             Object o = clazz.newInstance();
+            //将map的属性填入到bean中
             BeanUtils.populate(o, msg);
             return (WXEvent)o;
         } catch (InstantiationException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (IllegalAccessException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (InvocationTargetException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
@@ -91,10 +110,13 @@ public class Parser {
             return;
         }
         for (Class clazz : classes) {
+            //获取注解信息
             XmlMsgType xmlMsgType = (XmlMsgType) clazz.getAnnotation(XmlMsgType.class);
+            //是不是事件类型
             if (EVENT_TYPE.equals(xmlMsgType.msgType())) {
                 if (ArrayUtils.isNotEmpty(xmlMsgType.eventCondition())) {
                     String condition = StringUtils.join(xmlMsgType.eventCondition(), ",");
+                    //cache中放入对照关系
                     event_cache.put(xmlMsgType.eventType() + "," + condition, clazz);
                     event_condition_cache.put(xmlMsgType.eventType(), xmlMsgType.eventCondition());
                 } else {
@@ -106,6 +128,10 @@ public class Parser {
         }
     }
 
+    /**
+     * 根据配置，扫描指定包下面的类，找到所有 标有{@link XmlMsgType}注解的类
+     * @return
+     */
     private static Set<Class> scanFieldClass() {
         return ClassScaner.scan(ConfigUtils.getConfig().getString("event.package"), XmlMsgType.class);
     }
