@@ -1,6 +1,6 @@
 package com.piggsoft.message.req;
 
-import com.piggsoft.utils.BeanUtils;
+import com.piggsoft.utils.bean.BeanUtils;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;

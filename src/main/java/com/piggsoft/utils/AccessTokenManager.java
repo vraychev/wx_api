@@ -1,5 +1,12 @@
 package com.piggsoft.utils;
 
+import com.piggsoft.action.bean.rsp.AccessToken;
+import com.piggsoft.action.exception.ValidateResultException;
+import com.piggsoft.utils.config.ConfigUtils;
+import com.piggsoft.utils.factory.ActionFactoryUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.UUID;
@@ -9,7 +16,11 @@ import java.util.UUID;
  */
 public class AccessTokenManager {
 
-    private static String accessTokenCache = null;
+    private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenManager.class);
+
+    private static AccessToken accessTokenCache = null;
+
+    public static final String ACCESS_TOKEN_KEY = "access_token";
 
 
     public static String getAccessToken() {
@@ -21,11 +32,16 @@ public class AccessTokenManager {
                 }
             }
         }
-        return accessTokenCache;
+        return accessTokenCache.getAccess_token();
     }
 
-    private static String getAccessTokenFromWX() {
-        return UUID.randomUUID().toString();
+    private static AccessToken getAccessTokenFromWX() {
+        try {
+            return ActionFactoryUtils.getActionFactory().getTokenAction().action();
+        } catch (ValidateResultException e) {
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 
     private static synchronized void startSchedule() {
@@ -35,7 +51,7 @@ public class AccessTokenManager {
             public void run() {
                 AccessTokenManager.clearCache();
             }
-        }, ConfigUtils.getConfig().getLong("accessTokenSchedule"));
+        }, accessTokenCache.getExpires_in() * 1000);
     }
 
     private static synchronized void clearCache() {

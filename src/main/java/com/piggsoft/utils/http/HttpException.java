@@ -1,4 +1,4 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.http;
 
 /**
  * Created by user on 2015/11/16.

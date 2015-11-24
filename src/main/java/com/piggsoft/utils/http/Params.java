@@ -1,6 +1,7 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.http;
 
 import com.alibaba.fastjson.JSON;
+import com.piggsoft.utils.config.ConfigUtils;
 
 import java.util.HashMap;
 

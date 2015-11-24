@@ -1,6 +1,8 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.factory;
 
 import com.piggsoft.action.factory.ActionFactory;
+import com.piggsoft.utils.bean.BeanUtils;
+import com.piggsoft.utils.config.ConfigUtils;
 
 /**
  * Created by user on 2015/11/20.

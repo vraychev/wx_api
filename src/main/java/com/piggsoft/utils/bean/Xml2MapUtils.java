@@ -1,4 +1,4 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.bean;
 
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.converters.Converter;
@@ -17,10 +17,15 @@ import java.util.Map;
  */
 public class Xml2MapUtils {
 
-    public static Map<String, String> xml2Map(String xml) {
+    /**
+     * xml to map
+     * @param xml
+     * @return
+     */
+    public static Map<String, String> xml2Map(String xml, String alias) {
         XStream magicApi = new XStream();
         magicApi.registerConverter(new MapEntryConverter());
-        magicApi.alias("xml", Map.class);
+        magicApi.alias(alias, Map.class);
         Map<String, String> extractedMap = (Map<String, String>) magicApi.fromXML(xml);
         return extractedMap;
     }

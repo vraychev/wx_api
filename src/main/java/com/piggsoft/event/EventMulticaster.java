@@ -2,7 +2,7 @@ package com.piggsoft.event;
 
 import com.alibaba.fastjson.JSON;
 import com.piggsoft.listener.WXEventListener;
-import com.piggsoft.utils.BeanUtils;
+import com.piggsoft.utils.bean.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.OrderComparator;

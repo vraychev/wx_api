@@ -1,4 +1,4 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.http;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class HttpUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
-    private static int timeout = 100 * 1000;
+    private static int timeout = 10 * 1000;
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
@@ -99,7 +99,7 @@ public class HttpUtils {
     private static HttpEntity getEntity(Map<String, Object> params, String content, String charset) throws UnsupportedEncodingException {
         if (params != null && !params.isEmpty()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", new String[]{JSON.toJSONString(params), charset});
+                logger.debug("请求：params({});chartset({})", JSON.toJSONString(params), charset);
             }
             List<NameValuePair> _params = new ArrayList<NameValuePair>();
             for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -109,7 +109,7 @@ public class HttpUtils {
         }
         if (StringUtils.isNotEmpty(content)) {
             if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", new String[]{content, charset});
+                logger.debug("请求：params({});chartset({})", content, charset);
             }
             return new StringEntity(content, ContentType.create("application/x-www-form-urlencoded", Charset.forName(charset)));
         }
@@ -119,6 +119,9 @@ public class HttpUtils {
         return new StringEntity("");
     }
 
+    public static String get(String url, Map<String, Object> params) {
+        return get(url, params, DEFAULT_ENCODING);
+    }
 
     public static String get(String url, Map<String, Object> params, String encoding) {
         CloseableHttpClient httpClient = null;
@@ -130,6 +133,9 @@ public class HttpUtils {
             requestBuilder.setUri(url);
             requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
             for (Map.Entry<String, Object> entry : params.entrySet()) {
+                if (logger.isDebugEnabled()) {
+                  logger.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+                }
                 requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
             }
             get = requestBuilder.build();

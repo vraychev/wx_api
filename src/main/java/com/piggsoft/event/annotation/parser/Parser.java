@@ -2,8 +2,8 @@ package com.piggsoft.event.annotation.parser;
 
 import com.piggsoft.event.WXEvent;
 import com.piggsoft.event.annotation.XmlMsgType;
-import com.piggsoft.utils.ConfigUtils;
-import com.piggsoft.utils.Xml2MapUtils;
+import com.piggsoft.utils.config.ConfigUtils;
+import com.piggsoft.utils.bean.Xml2MapUtils;
 import org.apache.commons.beanutils.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
@@ -39,7 +39,7 @@ public class Parser {
      * @return
      */
     public static WXEvent parse(String content) {
-        Map<String, String> msg = Xml2MapUtils.xml2Map(content);
+        Map<String, String> msg = Xml2MapUtils.xml2Map(content, "xml");
         String msgType = msg.get("msgType");
         String eventType = msg.get("event");
         //是推送事件

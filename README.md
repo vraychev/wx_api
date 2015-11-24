@@ -1,7 +1,5 @@
 #微信SDK
 
-[![Join the chat at https://gitter.im/piggsoft/wx_api](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/piggsoft/wx_api?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
 ##写在之前
 [微信公众平台开发者文档](http://mp.weixin.qq.com/wiki/home/index.html)
 ####Get Start
