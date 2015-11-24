@@ -99,7 +99,7 @@ public class HttpUtils {
     private static HttpEntity getEntity(Map<String, Object> params, String content, String charset) throws UnsupportedEncodingException {
         if (params != null && !params.isEmpty()) {
             if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", new String[]{JSON.toJSONString(params), charset});
+                logger.debug("请求：params({});chartset({})", JSON.toJSONString(params), charset);
             }
             List<NameValuePair> _params = new ArrayList<NameValuePair>();
             for (Map.Entry<String, Object> entry : params.entrySet()) {
@@ -109,7 +109,7 @@ public class HttpUtils {
         }
         if (StringUtils.isNotEmpty(content)) {
             if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", new String[]{content, charset});
+                logger.debug("请求：params({});chartset({})", content, charset);
             }
             return new StringEntity(content, ContentType.create("application/x-www-form-urlencoded", Charset.forName(charset)));
         }
@@ -133,6 +133,9 @@ public class HttpUtils {
             requestBuilder.setUri(url);
             requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
             for (Map.Entry<String, Object> entry : params.entrySet()) {
+                if (logger.isDebugEnabled()) {
+                  logger.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+                }
                 requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
             }
             get = requestBuilder.build();

@@ -10,32 +10,32 @@ import java.util.Map;
 /**
  * Created by user on 2015/11/16.
  */
-public class GetTokenAction extends Action {
+public class TokenAction extends Action {
 
     @Override
-    public String getUrl() {
+    protected String getUrl() {
         return UrlUtils.tokenUrl;
     }
 
     @Override
-    public Map<String, Object> getParams() {
+    protected Map<String, Object> getParams() {
         Map<String, Object> map = new HashMap<String, Object>();
-        map.put("grant_type", "client_credential ");
+        map.put("grant_type", "client_credential");
         return map;
     }
 
     @Override
-    public HttpMethod getHttpMethod() {
+    protected HttpMethod getHttpMethod() {
         return HttpMethod.GET;
     }
 
     @Override
-    public Class getResultType() {
+    protected Class getResultType() {
         return AccessToken.class;
     }
 
     @Override
     protected <T> T postAction(Object result) {
-        return null;
+        return (T) result;
     }
 }

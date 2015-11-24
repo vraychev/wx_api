@@ -5,7 +5,7 @@ package com.piggsoft.action.bean.rsp;
  */
 public class AccessToken {
     private String access_token;
-    private String expires_in;
+    private int expires_in;
 
     public String getAccess_token() {
         return access_token;
@@ -15,11 +15,11 @@ public class AccessToken {
         this.access_token = access_token;
     }
 
-    public String getExpires_in() {
+    public int getExpires_in() {
         return expires_in;
     }
 
-    public void setExpires_in(String expires_in) {
+    public void setExpires_in(int expires_in) {
         this.expires_in = expires_in;
     }
 }

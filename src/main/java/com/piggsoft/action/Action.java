@@ -16,13 +16,13 @@ import java.util.Map;
  */
 public abstract class Action {
 
-    public abstract String getUrl();
+    protected abstract String getUrl();
 
-    public abstract Map<String, Object> getParams();
+    protected abstract Map<String, Object> getParams();
 
-    public abstract HttpMethod getHttpMethod();
+    protected abstract HttpMethod getHttpMethod();
 
-    public abstract Class getResultType();
+    protected abstract Class getResultType();
 
     public <T> T action() throws ValidateResultException {
         String url = getUrl();
