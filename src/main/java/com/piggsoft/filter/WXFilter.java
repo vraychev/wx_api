@@ -75,10 +75,12 @@ public class WXFilter implements Filter {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("接收到的报文为：\r\n{}\r\n", content);
         }
+        //解析接收的消息
         WXEvent event = Parser.parse(content);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("接收到的报文为序列化后：\r\n{}\r\n", JSON.toJSONString(event));
         }
+        //根据接收到的消息找到对应的监听
         WXEventListener listener = multicaster.getApplicationListener(event);
         if (listener == null) {
             if (LOGGER.isDebugEnabled()) {
