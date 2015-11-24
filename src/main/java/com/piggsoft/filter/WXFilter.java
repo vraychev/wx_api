@@ -41,7 +41,7 @@ public class WXFilter implements Filter {
     public EventMulticaster multicaster = new EventMulticaster();
 
     //多线程任务管理器
-    private static final ExecutorService service = Executors.newCachedThreadPool();
+    //private static final ExecutorService service = Executors.newCachedThreadPool();
 
     public void init(FilterConfig filterConfig) throws ServletException {
         init();
