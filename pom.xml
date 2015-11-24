@@ -10,6 +10,14 @@
     <name>WX_API</name>
     <url>http://maven.apache.org</url>
 
+    <developers>
+        <developer>
+            <id>Fire Pigg</id>
+            <name>chen yao</name>
+            <email>piggsoft@163.com</email>
+        </developer>
+    </developers>
+
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
