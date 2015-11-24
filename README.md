@@ -16,7 +16,6 @@
     </filter-mapping>
 ```  
 WXFilter是被动消息和事件的主入口，```url-pattern```可以任意配置，只需和公众号中的配置一致  
-
 3. ````classpath````下加入````wx.properties````配置
 ```
     #用户唯一凭证
@@ -25,7 +24,6 @@ WXFilter是被动消息和事件的主入口，```url-pattern```可以任意配�
     secret = 1231231
 ```  
 wx.properties 是整个SDK包的主配置文件，可以覆盖其中的任意配置（除非是你必须这样做）  
-
 4. ````classpath````下加入````wx.xml````配置  
     在其中加入：
 ```xml
