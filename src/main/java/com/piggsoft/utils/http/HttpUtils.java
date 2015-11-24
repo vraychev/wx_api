@@ -1,4 +1,4 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.http;
 
 import com.alibaba.fastjson.JSON;
 import org.apache.commons.lang3.StringUtils;
@@ -37,7 +37,7 @@ public class HttpUtils {
 
     private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
 
-    private static int timeout = 100 * 1000;
+    private static int timeout = 10 * 1000;
 
     private static final String DEFAULT_ENCODING = "UTF-8";
 
@@ -119,6 +119,9 @@ public class HttpUtils {
         return new StringEntity("");
     }
 
+    public static String get(String url, Map<String, Object> params) {
+        return get(url, params, DEFAULT_ENCODING);
+    }
 
     public static String get(String url, Map<String, Object> params, String encoding) {
         CloseableHttpClient httpClient = null;

@@ -1,6 +1,5 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.bean;
 
-import org.apache.commons.beanutils.BeanMap;
 import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -21,6 +20,11 @@ public class BeanUtils {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(BeanUtils.class);
 
+    /**
+     * java bean 转成 map
+     * @param obj
+     * @return
+     */
     public static Map<String, Object> beanToMap(Object obj) {
         Map<String, Object> result = new HashMap<String, Object>();
         try {
@@ -43,6 +47,12 @@ public class BeanUtils {
         return result;
     }
 
+    /**
+     * map to java object
+     * @param clazz
+     * @param map
+     * @return
+     */
     public static <T> T mapToBean(Class<T> clazz, Map<String, Object> map) {
         T t = null;
         try {

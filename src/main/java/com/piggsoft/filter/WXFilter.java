@@ -5,11 +5,10 @@ import com.piggsoft.event.EventMulticaster;
 import com.piggsoft.event.WXEvent;
 import com.piggsoft.event.annotation.parser.Parser;
 import com.piggsoft.listener.WXEventListener;
-import com.piggsoft.utils.ConfigUtils;
+import com.piggsoft.utils.config.ConfigUtils;
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
-import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.StreamUtils;
@@ -24,8 +23,6 @@ import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 
 /**
  * Created by user on 2015/11/16.

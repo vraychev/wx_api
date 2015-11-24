@@ -1,5 +1,6 @@
 package com.piggsoft.utils;
 
+import com.piggsoft.utils.config.ConfigUtils;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.junit.Assert;

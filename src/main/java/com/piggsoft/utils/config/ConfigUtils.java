@@ -1,4 +1,4 @@
-package com.piggsoft.utils;
+package com.piggsoft.utils.config;
 
 import org.apache.commons.configuration.Configuration;
 import org.apache.commons.configuration.ConfigurationException;
