@@ -16,6 +16,7 @@
         <url-pattern>/xx/xx</url-pattern>
     </filter-mapping>
 ```
+  
 3. ````classpath````下加入````wx.properties````配置
 ```
     #用户唯一凭证
@@ -23,6 +24,7 @@
     #用户唯一凭证密钥
     secret = 1231231
 ```
+  
 4. ````classpath````下加入````wx.xml````配置  
     在其中加入：
 ```xml
