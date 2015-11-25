@@ -1,7 +1,7 @@
 package com.piggsoft.action;
 
 import com.alibaba.fastjson.JSON;
-import com.piggsoft.action.exception.ValidateResultException;
+import com.piggsoft.action.exception.ValidateException;
 import com.piggsoft.utils.factory.ActionFactoryUtils;
 import org.junit.Test;
 
@@ -11,7 +11,7 @@ import org.junit.Test;
 public class TokenActionTest {
 
     @Test
-    public void test01() throws ValidateResultException {
+    public void test01() throws ValidateException {
         Object o = ActionFactoryUtils.getActionFactory().getTokenAction().action();
         System.out.println(JSON.toJSONString(o));
     }

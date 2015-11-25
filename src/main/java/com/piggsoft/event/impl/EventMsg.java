@@ -8,11 +8,16 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/19.
  */
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class EventMsg extends WXEvent {
+
+    /**
+     * 事件类型
+     */
     @XmlElement(name = "Event")
     private String event;
 

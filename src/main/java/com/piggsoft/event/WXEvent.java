@@ -1,31 +1,42 @@
 package com.piggsoft.event;
 
-import javax.xml.bind.JAXB;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlSeeAlso;
-import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.EventObject;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/16.
  */
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class WXEvent extends EventObject {
 
+    /**
+     * 消息类型
+     */
     @XmlElement(name = "MsgType")
     private String msgType;
+    /**
+     * 发送给谁
+     */
     @XmlElement(name = "ToUserName")
     private String toUserName;
+    /**
+     * 是谁发出的
+     */
     @XmlElement(name = "FromUserName")
     private String fromUserName;
+    /**
+     * 消息创建时间
+     */
     @XmlElement(name = "CreateTime")
     private String createTime;
+    /**
+     * id, 可以用来去重
+     */
     @XmlElement(name = "MsgId")
     private String msgId;
 

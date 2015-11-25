@@ -97,7 +97,8 @@
           option: 右大括号是否单独一行显示
           tokens: 定义检查的类型  -->
         <module name="RightCurly">
-            <property name="option" value="alone"/>
+            <!--<property name="option" value="alone"/>-->
+            <property name="option" value="same"/>
         </module>
 
         <!-- 检查在重写了equals方法后是否重写了hashCode方法 -->
@@ -120,7 +121,7 @@
 
         <!-- static, non-final fields -->
         <module name="StaticVariableName">
-            <property name="format" value="(^[A-Z0-9_]{0,19}$)"/>
+            <property name="format" value="(^[A-Z0-9_]{0,29}$)"/>
         </module>
 
         <!-- packages -->
@@ -140,7 +141,7 @@
 
         <!-- non-static fields -->
         <module name="MemberName">
-            <property name="format" value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,19}$)"/>
+            <property name="format" value="(^[a-z][a-z0-9][a-zA-Z0-9]{0,29}$)"/>
         </module>
 
         <!-- parameters -->
@@ -150,7 +151,7 @@
 
         <!-- constants (static,  final fields) -->
         <module name="ConstantName">
-            <property name="format" value="(^[A-Z0-9_]{0,19}$)"/>
+            <property name="format" value="(^[A-Z0-9_]{0,29}$)"/>
         </module>
 
         <!-- 代码缩进   -->

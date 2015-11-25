@@ -1,21 +1,28 @@
 package com.piggsoft.action.exception;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/24.
  */
-public class ValidateResultException extends Exception {
+public class ValidateException extends Exception {
 
+    /**
+     * 微信返回的错误消息代码
+     */
     private String errcode;
+    /**
+     * 微信返回的详细错误
+     */
     private String errmsg;
 
 
-    public ValidateResultException(String errcode, String errmsg) {
+    public ValidateException(String errcode, String errmsg) {
         super(errmsg);
         this.errcode = errcode;
         this.errmsg = errmsg;
     }
 
-    public ValidateResultException(Throwable cause, String errcode, String errmsg) {
+    public ValidateException(Throwable cause, String errcode, String errmsg) {
         super(cause);
         this.errcode = errcode;
         this.errmsg = errmsg;

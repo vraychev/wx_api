@@ -78,7 +78,7 @@ public class WXFilter implements Filter {
             LOGGER.debug("接收到的报文为序列化后：\r\n{}\r\n", JSON.toJSONString(event));
         }
         //根据接收到的消息找到对应的监听
-        WXEventListener listener = multicaster.getApplicationListener(event);
+        WXEventListener listener = multicaster.getListener(event);
         if (listener == null) {
             if (LOGGER.isDebugEnabled()) {
                 LOGGER.debug("未找到对应的Listener，返回");

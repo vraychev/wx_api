@@ -1,49 +1,70 @@
 package com.piggsoft.utils;
 
 import com.piggsoft.action.bean.rsp.AccessToken;
-import com.piggsoft.action.exception.ValidateResultException;
-import com.piggsoft.utils.config.ConfigUtils;
+import com.piggsoft.action.exception.ValidateException;
 import com.piggsoft.utils.factory.ActionFactoryUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.UUID;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/16.
+ * AccessToken 管理器
  */
 public class AccessTokenManager {
 
+    /**
+     * Logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(AccessTokenManager.class);
 
-    private static AccessToken accessTokenCache = null;
+    /**
+     * {@link AccessToken} 缓存副本
+     */
+    private static AccessToken ACCESS_TOKEN_CACHE = null;
 
+    /**
+     * 参数名，提供给其他类使用
+     */
     public static final String ACCESS_TOKEN_KEY = "access_token";
 
-
+    /**
+     * 获取accessToken
+     * <br/>如果当前的token已经过期，会从微信服务器重新取一次
+     * <br/>如果当前的token未过期，直接返回当前的token
+     * @return accessToken
+     */
     public static String getAccessToken() {
-        if (null == accessTokenCache) {
+        if (null == ACCESS_TOKEN_CACHE) {
             synchronized (AccessTokenManager.class) {
-                if (null == accessTokenCache) {
-                    accessTokenCache = getAccessTokenFromWX();
+                if (null == ACCESS_TOKEN_CACHE) {
+                    ACCESS_TOKEN_CACHE = getAccessTokenFromWX();
                     startSchedule();
                 }
             }
         }
-        return accessTokenCache.getAccess_token();
+        return ACCESS_TOKEN_CACHE.getAccessToken();
     }
 
+    /**
+     * 从微信服务器回去accessToken
+     * @return {@link AccessToken}
+     */
     private static AccessToken getAccessTokenFromWX() {
         try {
             return ActionFactoryUtils.getActionFactory().getTokenAction().action();
-        } catch (ValidateResultException e) {
+        } catch (ValidateException e) {
             LOGGER.error(e.getMessage(), e);
         }
         return null;
     }
 
+    /**
+     * 开始定时任务，失效期到时，执行清理cache
+     */
     private static synchronized void startSchedule() {
         Timer timer = new Timer();
         timer.schedule(new TimerTask() {
@@ -51,11 +72,14 @@ public class AccessTokenManager {
             public void run() {
                 AccessTokenManager.clearCache();
             }
-        }, accessTokenCache.getExpires_in() * 1000);
+        }, ACCESS_TOKEN_CACHE.getExpiresIn() * 1000);
     }
 
+    /**
+     * 清理accessToken cache
+     */
     private static synchronized void clearCache() {
-        AccessTokenManager.accessTokenCache = null;
+        AccessTokenManager.ACCESS_TOKEN_CACHE = null;
     }
 
 }
