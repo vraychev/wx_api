@@ -82,7 +82,8 @@ public class ClassScaner implements ResourceLoaderAware {
             classes.addAll(cs.doScan(s));  
         return classes;  
     }  
-  
+   
+    //扫描packageSearchPath路径下的class
     public Set<Class> doScan(String basePackage) {  
         Set<Class> classes = new HashSet<Class>();  
         try {  
