@@ -23,6 +23,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.nio.charset.Charset;
@@ -60,40 +61,13 @@ public class HttpUtils {
     }
 
     private static String _post(String url, String charset, Map<String, Object> params, String content) throws HttpException {
-        CloseableHttpClient httpClient = null;
-        HttpPost post = null;
-        String responseMessage = null;
         try {
-            httpClient = HttpClients.createDefault();
-            post = new HttpPost(url);
-            post.setConfig(CONFIG);
             HttpEntity httpEntity = getEntity(params, content, charset);
-            post.setEntity(httpEntity);
-            //不能加上Content-Type,加上后台servlet不会解析参数
-            //post.setHeader("Content-Type", "text/xml;charset=" + charset);
-            /*CloseableHttpResponse response = httpClient.execute(post);
-            responseMessage = EntityUtils.toString(response.getEntity(), Charset.forName(charset));*/
-            responseMessage = httpClient.execute(post, responseHandler);
-        } catch (ClientProtocolException e) {
+            return post(url, httpEntity);
+        } catch (UnsupportedEncodingException e) {
             logger.error(e.getMessage(), e);
             throw new HttpException(e);
-        } catch (IOException e) {
-            logger.error(e.getMessage(), e);
-            throw new HttpException(e);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
-                    throw new HttpException(e);
-                }
-            }
         }
-        return responseMessage;
     }
 
     private static HttpEntity getEntity(Map<String, Object> params, String content, String charset) throws UnsupportedEncodingException {
@@ -148,8 +122,10 @@ public class HttpUtils {
             result = httpClient.execute(get, responseHandler);
         } catch (ClientProtocolException e) {
             logger.error(e.getMessage(), e);
+            throw new HttpException(e);
         } catch (IOException e) {
             logger.error(e.getMessage(), e);
+            throw new HttpException(e);
         } finally {
             if (httpClient != null) {
                 try {
@@ -163,6 +139,18 @@ public class HttpUtils {
     }
 
     public static String postChunk(String url, File file) {
+        try {
+            InputStreamEntity httpEntity = new InputStreamEntity(
+                    new FileInputStream(file), -1, ContentType.APPLICATION_OCTET_STREAM);
+            return post(url, httpEntity);
+        } catch (FileNotFoundException e) {
+            logger.error(e.getMessage(), e);
+            throw new HttpException(e);
+        }
+    }
+
+
+    public static String post(String url, HttpEntity entity) {
         CloseableHttpClient httpClient = null;
         HttpPost post = null;
         String responseMessage = null;
@@ -170,9 +158,7 @@ public class HttpUtils {
             httpClient = HttpClients.createDefault();
             post = new HttpPost(url);
             post.setConfig(CONFIG);
-            InputStreamEntity httpEntity = new InputStreamEntity(
-                    new FileInputStream(file), -1, ContentType.APPLICATION_OCTET_STREAM);
-            post.setEntity(httpEntity);
+            post.setEntity(entity);
             //不能加上Content-Type,加上后台servlet不会解析参数
             //post.setHeader("Content-Type", "text/xml;charset=" + charset);
             /*CloseableHttpResponse response = httpClient.execute(post);
@@ -199,6 +185,7 @@ public class HttpUtils {
         }
         return responseMessage;
     }
+
 
     static class ResponseHandler implements org.apache.http.client.ResponseHandler<String> {
         public String handleResponse(HttpResponse response) throws IOException {

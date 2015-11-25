@@ -1,0 +1,580 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ruleset name="Favorites"
+         xmlns="http://pmd.sf.net/ruleset/1.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://pmd.sf.net/ruleset/1.0.0 http://pmd.sf.net/ruleset_xml_schema.xsd"
+         xsi:noNamespaceSchemaLocation="http://pmd.sf.net/ruleset_xml_schema.xsd">
+
+    <description>
+        规则版本号：V1.2（2008-11-04）
+        去除规则AvoidUsingHardCodedIP
+        增加规则－－－－－－－级别为3－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+        EmptyStaticInitializer、EmptyStatementNotInLoop、UnnecessaryFinalModifier、
+        ExcessiveParameterList、UnnecessaryConstructor、DontImportSun、UseSingleton、
+        AvoidDeeplyNestedIfStmts、DefaultLabelNotLastInSwitchStmt、NonCaseLabelInSwitchStatement、
+        AvoidInstanceofChecksInCatchClause、SimplifyConditional、AvoidCallingFinalize、
+        DontImportJavaLang、ImportFromSamePackage、BooleanGetMethodName、
+        SignatureDeclareThrowsException、AvoidThrowingRawExceptionTypes、DoNotExtendJavaLangError
+        －－－－－－－级别为4－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－－
+        OverrideBothEqualsAndHashcode、EmptySynchronizedBlock、UselessOperationOnImmutable、
+        MisplacedNullCheck、BrokenNullCheck、IfStmtsMustUseBraces、WhileLoopsMustUseBraces、
+        IfElseStmtsMustUseBraces、ForLoopsMustUseBraces、AvoidAccessibilityAlteration、
+        DoNotCallGarbageCollectionExplicitly、BadComparison、InstantiationToGetClass、
+        UseNotifyAllInsteadOfNotify、ReturnEmptyArrayRatherThanNull、StringInstantiation、
+        StringToString、UseEqualsToCompareStrings、UnusedPrivateField、UnusedPrivateMethod
+
+
+        规则版本号：V1.1（2008-08-13）
+        去除规则ShortVariable
+
+        规则版本号：V1.0（2008-08-11）
+        推荐指数是4、5级的规则。
+    </description>
+
+
+    <!--====================Basic Rules begin（共33个）======================-->
+    <rule ref="rulesets/java/basic.xml/EmptyCatchBlock">
+        <properties>
+            <property name="allowCommentedBlocks" value="false"/>
+        </properties>
+    </rule>
+    <!--不允许出现空的catch块,避免屏蔽异常，不处理或不报告异常。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyIfStmt"/>
+    <!--不允许有空if语句块（或空else块）。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyWhileStmt"/>
+    <!--不允许有空while循环块。注意：不包括do循环。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyTryBlock"/>
+    <!--不允许有空try块。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyFinallyBlock"/>
+    <!--不允许有空finally块。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptySwitchStatements"/>
+    <!--不允许有空switch块。与这个规则重复：rulesets/java/design.xml/SwitchStmtsShouldHaveDefault、MissingBreakInSwitch。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/JumbledIncrementer"/>
+    <!--避免混乱的循环变量赋值（避免在内循环里修改外循环变量）。与这个规则有点重复：rulesets/java/controversial.xml/DataflowAnomalyAnalysis。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/basic.xml/ForLoopShouldBeWhileLoop"/-->
+    <!--简单的for循环可以用while循环取代。(FindBugs不检查，注，FindBugs能发现死循环)-->
+    <!--rule ref="rulesets/java/basic.xml/UnnecessaryConversionTemporary"/-->
+    <!--当基本型数据转换成String时，避免不必要的临时对象。(FindBugs检查)-->
+    <rule ref="rulesets/java/basic.xml/OverrideBothEqualsAndHashcode"/>
+    <!--equals和hashcode同时定义。(FindBugs检查)-->
+    <!--rule ref="rulesets/java/basic.xml/DoubleCheckedLocking"/-->
+    <!--doublecheck问题。(FindBugs检查)-->
+    <rule ref="rulesets/java/basic.xml/ReturnFromFinallyBlock"/>
+    <!--禁止在finally块里return，避免屏蔽异常。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptySynchronizedBlock"/>
+    <!--避免空的同步块。(FindBugs检查)-->
+    <!--rule ref="rulesets/java/basic.xml/UnnecessaryReturn"/-->
+    <!--方法返回值void，避免不必要的return。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyStaticInitializer"/>
+    <!--空的static初始化。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/UnconditionalIfStatement"/>
+    <!--if语句的条件始终是true或false。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/EmptyStatementNotInLoop"/>
+    <!--出现了空语句（就一个分号），如果在循环里则可以。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/BooleanInstantiation"/>
+    <!--避免实例化Boolean对象，而应用常量Boolean.TRUE, Boolean.FALSE。(FindBugs只检查构造方法生成对象的情况，不检查valueOf)-->
+    <rule ref="rulesets/java/basic.xml/UnnecessaryFinalModifier"/>
+    <!--当一个类定义成final后，它所有的方法自动final。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/basic.xml/CollapsibleIfStatements"/-->
+    <!--内嵌的if语句能够和外层的if语句合并成一个if语句。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/basic.xml/UselessOverridingMethod"/-->
+    <!--被覆盖的方法仅仅调用了基类的方法。(FindBugs检查)-->
+    <rule ref="rulesets/java/basic.xml/ClassCastExceptionWithToArray"/>
+    <!--Collection.toArray调用转换成数组，应主动传一个明确类型的数组对象，否则运行时会抛ClassCastException异常。相似规则：rulesets/java/design.xml/OptimizableToArrayCall。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/AvoidDecimalLiteralsInBigDecimalConstructor"/>
+    <!--new BigDecimal建议用String参数的构造方法，而不是十进制小数常量（整数除外）。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/UselessOperationOnImmutable"/>
+    <!--不可变对象（如BigDecimal、BigInteger）上的操作结果被忽略。(FindBugs检查)-->
+    <rule ref="rulesets/java/basic.xml/MisplacedNullCheck"/>
+    <!--空指针判断放错了位置。要么之前已报空指针，要么此处永远不可能是空指针。(FindBugs检查)-->
+    <!--rule ref="rulesets/java/basic.xml/UnusedNullCheckInEquals"/-->
+    <!--在判断了对象是否是空指针后，后面紧接着调用该对象的equals方法，而不是将对象作为另一个对象的equals参数。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/basic.xml/AvoidThreadGroup"/-->
+    <!--不建议用ThreadGroup，因为它的方法不是线程安全的。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/BrokenNullCheck"/>
+    <!--应该用&&取代||或反之。(FindBugs检查)-->
+    <rule ref="rulesets/java/basic.xml/BigIntegerInstantiation"/>
+    <!--不要再创建已经有的对象（BigDecimal.ZERO, BigDecimal.ONE, BigDecimal.TEN）。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/basic.xml/AvoidUsingOctalValues"/-->
+    <!--避免使用八进制值。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/basic.xml/AvoidUsingHardCodedIP">
+      <properties>
+          <property name="pattern" value=""/>
+      </properties>
+    </rule>
+    -->
+    <!--避免硬编码IPv4和IPv6，以免在某些情况下变的不可能布署。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/CheckResultSet"/>
+    <!--对ResultSet的方法（next,previous,first,last）调用结果要进行是否是真的判断。(FindBugs不检查)-->
+    <rule ref="rulesets/java/basic.xml/AvoidMultipleUnaryOperators"/>
+    <!--避免多个一元操作符，要么是一个错误，要么易引起混淆。(FindBugs不检查)-->
+    <!--====================Basic Rules end======================-->
+
+
+    <!--====================braces Rules begin（共4个）======================-->
+    <rule ref="rulesets/java/braces.xml/IfStmtsMustUseBraces"/>
+    <rule ref="rulesets/java/braces.xml/WhileLoopsMustUseBraces"/>
+    <rule ref="rulesets/java/braces.xml/IfElseStmtsMustUseBraces"/>
+    <rule ref="rulesets/java/braces.xml/ForLoopsMustUseBraces"/>
+    <!--====================braces Rules end======================-->
+
+
+    <!--====================clone Rules begin（共3个）======================-->
+    <rule ref="rulesets/java/clone.xml/ProperCloneImplementation"/>
+    <rule ref="rulesets/java/clone.xml/CloneThrowsCloneNotSupportedException"/>
+    <rule ref="rulesets/java/clone.xml/CloneMethodMustImplementCloneable"/>
+    <!--====================clone Rules end======================-->
+
+
+    <!--====================codesize Rules begin（共11个）======================-->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/NPathComplexity">
+        <properties>
+           <property name="minimum" value="200"/>
+        </properties>
+    </rule>
+    -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/ExcessiveMethodLength">
+        <properties>
+           <property name="minimum" value="100"/>
+        </properties>
+    </rule>
+    -->
+    <rule ref="rulesets/java/codesize.xml/ExcessiveParameterList">
+        <properties>
+            <property name="minimum" value="6"/>
+        </properties>
+    </rule>
+    <!--
+    <rule ref="rulesets/java/codesize.xml/ExcessiveClassLength">
+        <properties>
+           <property name="minimum" value="1000"/>
+        </properties>
+    </rule>
+    -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/CyclomaticComplexity">
+        <properties>
+           <property name="reportLevel" value="10"/>
+           property name="showClassesComplexity" value="true"/>
+           property name="showMethodsComplexity" value="true"/>
+        </properties>
+    </rule>
+    -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/ExcessivePublicCount">
+        <properties>
+           <property name="minimum" value="45"/>
+        </properties>
+    </rule>
+    -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/TooManyFields">
+        <properties>
+           <property name="maxfields" value="15"/>
+        </properties>
+    </rule>
+    -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/NcssMethodCount">
+        <properties>
+           <property name="minimum" value="100"/>
+        </properties>
+    </rule>
+     -->
+    <!--
+   <rule ref="rulesets/java/codesize.xml/NcssTypeCount">
+       <properties>
+          <property name="minimum" value="1500"/>
+       </properties>
+   </rule>
+   -->
+    <!--
+    <rule ref="rulesets/java/codesize.xml/NcssConstructorCount">
+        <properties>
+           <property name="minimum" value="100"/>
+        </properties>
+    </rule>
+     -->
+    <!--
+   <rule ref="rulesets/java/codesize.xml/TooManyMethods">
+       <properties>
+          <property name="maxmethods" value="20"/>
+       </properties>
+   </rule>
+   -->
+    <!--====================codesize Rules end======================-->
+
+
+    <!--====================controversial Rules begin（共19个）======================-->
+    <rule ref="rulesets/java/controversial.xml/UnnecessaryConstructor"/>
+    <!--rule ref="rulesets/java/controversial.xml/NullAssignment"/-->
+    <!--rule ref="rulesets/java/controversial.xml/OnlyOneReturn"/-->
+    <!--rule ref="rulesets/java/controversial.xml/UnusedModifier"/-->
+    <!--rule ref="rulesets/java/controversial.xml/AssignmentInOperand"/-->
+    <!--rule ref="rulesets/java/controversial.xml/AtLeastOneConstructor"/-->
+    <rule ref="rulesets/java/controversial.xml/DontImportSun"/>
+    <!--rule ref="rulesets/java/controversial.xml/SuspiciousOctalEscape"/-->
+    <!--rule ref="rulesets/java/controversial.xml/CallSuperInConstructor"/-->
+    <!--rule ref="rulesets/java/controversial.xml/UnnecessaryParentheses"/-->
+    <!--rule ref="rulesets/java/controversial.xml/DefaultPackage"/-->
+    <!--rule ref="rulesets/java/controversial.xml/BooleanInversion"/-->
+    <!--
+    <rule ref="rulesets/java/controversial.xml/DataflowAnomalyAnalysis">
+          <properties>
+           <property name="maxviolations" value="100"/>
+           <property name="maxpaths" value="1000"/>
+        </properties>
+    </rule>
+    -->
+    <!--rule ref="rulesets/java/controversial.xml/AvoidFinalLocalVariable"/-->
+    <!--rule ref="rulesets/java/controversial.xml/AvoidUsingShortType"/-->
+    <!--rule ref="rulesets/java/controversial.xml/AvoidUsingVolatile"/-->
+    <!--rule ref="rulesets/java/controversial.xml/AvoidUsingNativeCode"/-->
+    <rule ref="rulesets/java/controversial.xml/AvoidAccessibilityAlteration"/>
+    <rule ref="rulesets/java/controversial.xml/DoNotCallGarbageCollectionExplicitly"/>
+    <!--====================controversial Rules end======================-->
+
+
+    <!--====================coupling Rules begin（共3个）======================-->
+    <!--
+   <rule ref="rulesets/java/coupling.xml/CouplingBetweenObjects">
+       <properties>
+          <property name="threshold" value="20"/>
+       </properties>
+   </rule>
+   -->
+    <!--
+    <rule ref="rulesets/java/coupling.xml/ExcessiveImports">
+        <properties>
+           <property name="minimum" value="30"/>
+        </properties>
+    </rule>
+    -->
+    <rule ref="rulesets/java/coupling.xml/LooseCoupling"/>
+    <!--====================coupling Rules end======================-->
+
+
+    <!--====================Design Rules begin（共48个）======================-->
+    <rule ref="rulesets/java/design.xml/UseSingleton"/>
+    <!--如果成员方法都是static，建议使用Singletom模式，或定义成abstract类。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/SimplifyBooleanReturns"/>
+    <!--避免以下代码
+          if (bar == x) {
+          return true;
+          } else {
+          return false;
+          }(FindBugs不检查)
+   -->
+    <rule ref="rulesets/java/design.xml/SimplifyBooleanExpressions"/>
+    <!--避免以下代码
+          boolean bar = (isFoo() == true);(FindBugs不检查)
+    -->
+    <rule ref="rulesets/java/design.xml/SwitchStmtsShouldHaveDefault"/>
+    <!--switch语句应该有一个default。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/AvoidDeeplyNestedIfStmts">
+        <properties>
+            <property name="problemDepth" value="5"/>
+        </properties>
+    </rule>
+    <!--避免较深的if语句，注意：有else的不算。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/AvoidReassigningParameters"/>
+    -->
+    <!--避免方法参数未使用就被赋值。(FindBugs检查)-->
+    <!--不用
+    <rule ref="rulesets/java/design.xml/SwitchDensity">
+      <properties>
+          <property name="minimum" value="10"/>
+      </properties>
+    </rule>
+    -->
+    <!--label下的语句太多，建议优化重构。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/ConstructorCallsOverridableMethod"/-->
+    <!-- 在构造方法中调用了可能会被覆盖的成员方法，后果：可能会有空指针错误。(FindBugs不检查) -->
+    <rule ref="rulesets/java/design.xml/AccessorClassGeneration"/>
+    <!-- 避免以下代码，私有构造方法类在类定义外生成实例，这会导致the generation of an accessor。(FindBugs不检查)
+          public class Outer {
+           void method(){
+            Inner ic = new Inner();//Causes generation of accessor class
+           }
+           public class Inner {
+            private Inner(){}
+           }
+          }
+     -->
+    <rule ref="rulesets/java/design.xml/FinalFieldCouldBeStatic"/>
+    <!-- final成员变量(field，类字段)建议定义成static，这样可以节省空间 。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/CloseResource"/-->
+    <!-- Connection,Statement,ResultSet对象使用后要close。(FindBugs不检查) -->
+    <!--rule ref="rulesets/java/design.xml/NonStaticInitializer"/-->
+    <!-- 不建议使用非静态初始化块 ，易引起混乱。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/DefaultLabelNotLastInSwitchStmt"/>
+    <!-- switch中的default应放在最后一个。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/NonCaseLabelInSwitchStatement"/>
+    <!-- switch中有非case的label。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/OptimizableToArrayCall"/-->
+    <!-- Collection.toArray(T[] a)调用中new a数组时要指定数组长度。(FindBugs检查)-->
+    <rule ref="rulesets/java/design.xml/BadComparison"/>
+    <!-- 避免与Double.NaN进行是否相等比较(==)。(FindBugs检查)-->
+    <rule ref="rulesets/java/design.xml/EqualsNull"/>
+    <!-- 避免与null比较，如x.equals(null) (FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/ConfusingTernary"/>
+    -->
+    <!-- 避免if(x!=y),要先if(x==y) (FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/InstantiationToGetClass"/>
+    <!-- 为了获得Class对象，请用类的class成员，而不要实例化对象然后getClass (FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/IdempotentOperations"/-->
+    <!-- 避免幂等操作，如变量赋值给它自己 (FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/SimpleDateFormatNeedsLocale"/-->
+    <!-- 生成SimpleDateFormat实例的时候要求指定Locale(FindBugs不检查) -->
+    <!--rule ref="rulesets/java/design.xml/ImmutableField"/-->
+    <!-- field在变量定义时或构造方法中赋值后就再也没有改变过，则可以定义成final的。(FindBugs不检查) -->
+    <!--rule ref="rulesets/java/design.xml/UseLocaleWithCaseConversions"/-->
+    <!-- 在进行大小字转换(String.toLowerCase()/toUpperCase() )的时候请使用Locale，可以避免某些Locale带来的问题(FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/AvoidProtectedFieldInFinalClass"/-->
+    <!-- final类不要出现protected字段(FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/AssignmentToNonFinalStatic"/-->
+    <!-- 赋值给静态非final变量，可能会不安全。在静态区赋值或定义时赋值则没问题。(FindBugs检查)-->
+    <rule ref="rulesets/java/design.xml/MissingStaticMethodInNonInstantiatableClass"/>
+    <!-- 在不能实例化的类里（定义了私有构造方法的类）没有静态方法，这样这个类不可用。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/AvoidSynchronizedAtMethodLevel"/-->
+    <!-- 用块级别的同步代替方法级的同步，这样能够保证让真正需要的代码同步(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/MissingBreakInSwitch"/-->
+    <!-- case没有break(FindBugs检查)-->
+    <rule ref="rulesets/java/design.xml/UseNotifyAllInsteadOfNotify"/>
+    <!-- 用notifyAll取代notify(FindBugs检查)-->
+    <rule ref="rulesets/java/design.xml/AvoidInstanceofChecksInCatchClause"/>
+    <!-- 避免在catch子句里再判断具体的异常类型，就是用instanceof。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/AbstractClassWithoutAbstractMethod"/-->
+    <!-- 抽象类没有定义任何抽象方法，如果类仅希望作为基类使用，但又不需要抽象方法，则建议提供一个protected构造方法。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/SimplifyConditional"/-->
+    <!-- 条件表达式中没有必要在instanceof之前进行空指针判断。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/CompareObjectsWithEquals"/-->
+    <!-- 建议用equals对象，而不是用==.(FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/PositionLiteralsFirstInComparisons"/-->
+    <!-- 字符串变量与常量比较时，先写常量，这样可以避免空指针异常。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/UnnecessaryLocalBeforeReturn"/-->
+    <!-- 避免不必要的本地变量。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/NonThreadSafeSingleton">
+       <properties>
+          <property name="checkNonStaticMethods" value="true"/>
+          <property name="checkNonStaticFields" value="true"/>
+       </properties>
+    </rule>
+    -->
+    <!-- 线程不安全的Singleton。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/UncommentedEmptyMethod"/-->
+    <!-- 未加注释的空方法，在方法的花括弧之间未加注释。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/UncommentedEmptyConstructor">
+        <properties>
+          <property name="ignoreExplicitConstructorInvocation" value="true"/>
+       </properties>
+    </rule>
+    -->
+    <!-- 未加注释的空构造方法，在方法的花括弧之间未加注释。注意，在super或this前的注释不算。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/AvoidConstantsInterface"/-->
+    <!-- 避免只有常量的接口定义,可以考虑将其转换成类。(FindBugs不检查)-->
+    <!--rule ref="rulesets/java/design.xml/UnsynchronizedStaticDateFormatter"/-->
+    <!-- 静态SimpleDateFormat成员变量访问未加同步。(FindBugs检查，另外FindBugs不建议定义静态SimpleDateFormat成员变量)-->
+    <rule ref="rulesets/java/design.xml/PreserveStackTrace"/>
+    <!-- catch到了异常后又重新throw新的异常，未保留源异常，源异常的stack trace可能会丢失，不利于程序调试。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/UseCollectionIsEmpty"/>
+    <!-- 对Collection对象，建议用isEmpty()取代size()与0的判断。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/ClassWithOnlyPrivateConstructorsShouldBeFinal"/>
+    <!-- 只有私有构造方法的类应该申明为final的，除非构造方法被内部类调用。注，私有构造方法的类能够被它的内部类使用。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/EmptyMethodInAbstractClassShouldBeAbstract"/>
+    -->
+    <!-- 抽象类里的空方法应该定义成abstract。(FindBugs不检查)-->
+    <!--
+    <rule ref="rulesets/java/design.xml/SingularField">
+       <properties>
+          <property name="CheckInnerClasses" value="true"/>
+          <property name="DisallowNotAssignment" value="true"/>
+       </properties>
+    </rule>
+    -->
+    <!-- 某个类字段仅在一个方法中使用，建议改用本地变量。构造方法中有赋值不算，但定义时有初始值算。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/ReturnEmptyArrayRatherThanNull"/>
+    <!-- 返回空数组，而不是null。(FindBugs检查)-->
+    <!--rule ref="rulesets/java/design.xml/AbstractClassWithoutAnyMethod"/-->
+    <!-- 如果一个抽象类不包含任何方法，只有数据字段，则建议定义private或protected的构造方法以不允许实例化。(FindBugs不检查)-->
+    <rule ref="rulesets/java/design.xml/TooFewBranchesForASwitchStatement"/>
+    <!--
+    <properties>
+       <property name="minimumNumberCaseForASwitch" value="3"/>
+    </properties>
+    -->
+    <!-- switch的case语句如果太少的话建议用if取代，以增加代码可读性。(FindBugs不检查)-->
+    <!--====================Design Rules end======================-->
+
+
+    <!--====================finalizers Rules begin（共6个）======================-->
+    <rule ref="rulesets/java/finalizers.xml/EmptyFinalizer"/>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeOnlyCallsSuperFinalize"/>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeOverloaded"/>
+    <rule ref="rulesets/java/finalizers.xml/FinalizeDoesNotCallSuperFinalize"/>
+    <!--rule ref="rulesets/java/finalizers.xml/FinalizeShouldBeProtected"/-->
+    <rule ref="rulesets/java/finalizers.xml/AvoidCallingFinalize"/>
+    <!--====================finalizers Rules end======================-->
+
+
+    <!--====================imports Rules begin（共5个）======================-->
+    <rule ref="rulesets/java/imports.xml/DuplicateImports"/>
+    <rule ref="rulesets/java/imports.xml/DontImportJavaLang"/>
+    <rule ref="rulesets/java/imports.xml/UnusedImports"/>
+    <rule ref="rulesets/java/imports.xml/ImportFromSamePackage"/>
+    <!--
+    <rule ref="rulesets/java/imports.xml/TooManyStaticImports">
+        <properties>
+           <property name="maximumStaticImports" value="4"/>
+        </properties>
+    </rule>
+    -->
+    <!--====================imports Rules end======================-->
+
+
+    <!--====================j2ee Rules begin（共9个）======================-->
+    <!--rule ref="rulesets/java/j2ee.xml/UseProperClassLoader"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/MDBAndSessionBeanNamingConvention"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/RemoteSessionInterfaceNamingConvention"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/LocalInterfaceSessionNamingConvention"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/LocalHomeNamingConvention"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/RemoteInterfaceNamingConvention"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/DoNotCallSystemExit"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/StaticEJBFieldShouldBeFinal"/-->
+    <!--rule ref="rulesets/java/j2ee.xml/DoNotUseThreads"/-->
+    <!--====================j2ee Rules end======================-->
+
+
+    <!--====================logging-jakarta-commons Rules begin（共2个）======================-->
+    <!--rule ref="rulesets/java/logging-jakarta-commons.xml/UseCorrectExceptionLogging"/-->
+    <!--
+    <rule ref="rulesets/java/logging-jakarta-commons.xml/ProperLogger">
+        <properties>
+           <property name="staticLoggerName" value="log"/>
+        </properties>
+    </rule>
+    -->
+    <!--====================logging-jakarta-commons Rules end======================-->
+
+
+    <!--====================logging-java Rules begin（共4个）======================-->
+    <rule ref="rulesets/java/logging-java.xml/MoreThanOneLogger"/>
+    <!--rule ref="rulesets/java/logging-java.xml/LoggerIsNotStaticFinal"/-->
+    <rule ref="rulesets/java/logging-java.xml/SystemPrintln"/>
+    <rule ref="rulesets/java/logging-java.xml/AvoidPrintStackTrace"/>
+    <!--====================logging-java Rules end======================-->
+
+
+    <!--====================naming Rules begin（共18个）======================-->
+    <!--rule ref="rulesets/java/naming.xml/ShortVariable"/-->
+    <!--
+    <rule ref="rulesets/java/naming.xml/LongVariable">
+        <properties>
+           <property name="minimum" value="40"/>
+        </properties>
+    </rule>
+    -->
+    <rule ref="rulesets/java/naming.xml/ShortMethodName"/>
+    <rule ref="rulesets/java/naming.xml/VariableNamingConventions"/>
+    <rule ref="rulesets/java/naming.xml/MethodNamingConventions"/>
+    <rule ref="rulesets/java/naming.xml/ClassNamingConventions"/>
+    <!--rule ref="rulesets/java/naming.xml/AbstractNaming"/-->
+    <rule ref="rulesets/java/naming.xml/AvoidDollarSigns"/>
+    <rule ref="rulesets/java/naming.xml/MethodWithSameNameAsEnclosingClass"/>
+    <rule ref="rulesets/java/naming.xml/SuspiciousHashcodeMethodName"/>
+    <rule ref="rulesets/java/naming.xml/SuspiciousConstantFieldName"/>
+    <rule ref="rulesets/java/naming.xml/SuspiciousEqualsMethodName"/>
+    <rule ref="rulesets/java/naming.xml/AvoidFieldNameMatchingTypeName"/>
+    <rule ref="rulesets/java/naming.xml/AvoidFieldNameMatchingMethodName"/>
+    <rule ref="rulesets/java/naming.xml/NoPackage"/>
+    <rule ref="rulesets/java/naming.xml/PackageCase"/>
+    <rule ref="rulesets/java/naming.xml/MisleadingVariableName"/>
+    <rule ref="rulesets/java/naming.xml/BooleanGetMethodName">
+        <properties>
+            <property name="checkParameterizedMethods" value="false"/>
+        </properties>
+    </rule>
+    <!--====================naming Rules end======================-->
+
+
+    <!--====================optimization Rules begin（共10个）======================-->
+    <!--rule ref="rulesets/java/optimizations.xml/LocalVariableCouldBeFinal"/-->
+    <!--rule ref="rulesets/java/optimizations.xml/MethodArgumentCouldBeFinal"/-->
+    <!--rule ref="rulesets/java/optimizations.xml/AvoidInstantiatingObjectsInLoops"/-->
+    <rule ref="rulesets/java/optimizations.xml/UseArrayListInsteadOfVector"/>
+    <!--rule ref="rulesets/java/optimizations.xml/SimplifyStartsWith"/-->
+    <!--rule ref="rulesets/java/optimizations.xml/UseStringBufferForStringAppends"/-->
+    <rule ref="rulesets/java/optimizations.xml/UseArraysAsList"/>
+    <rule ref="rulesets/java/optimizations.xml/AvoidArrayLoops"/>
+    <rule ref="rulesets/java/optimizations.xml/UnnecessaryWrapperObjectCreation"/>
+    <!--rule ref="rulesets/java/optimizations.xml/AddEmptyString"/-->
+    <!--====================optimization Rules end======================-->
+
+
+    <!--====================strictexception Rules begin（共9个）======================-->
+    <rule ref="rulesets/java/strictexception.xml/AvoidCatchingThrowable"/>
+    <rule ref="rulesets/java/strictexception.xml/SignatureDeclareThrowsException"/>
+    <rule ref="rulesets/java/strictexception.xml/ExceptionAsFlowControl"/>
+    <rule ref="rulesets/java/strictexception.xml/AvoidCatchingNPE"/>
+    <rule ref="rulesets/java/strictexception.xml/AvoidThrowingRawExceptionTypes"/>
+    <!--rule ref="rulesets/java/strictexception.xml/AvoidThrowingNullPointerException"/-->
+    <rule ref="rulesets/java/strictexception.xml/AvoidRethrowingException"/>
+    <rule ref="rulesets/java/strictexception.xml/DoNotExtendJavaLangError"/>
+    <rule ref="rulesets/java/strictexception.xml/DoNotThrowExceptionInFinally"/>
+    <!--====================strictexception Rules end======================-->
+
+
+    <!--====================sunsecure Rules begin（共2个）======================-->
+    <!--rule ref="rulesets/java/sunsecure.xml/MethodReturnsInternalArray"/-->
+    <!--rule ref="rulesets/java/sunsecure.xml/ArrayIsStoredDirectly"/-->
+    <!--====================sunsecure Rules end======================-->
+
+
+    <!--====================strings Rules begin（共15个）======================-->
+    <!--
+    <rule ref="rulesets/java/strings.xml/AvoidDuplicateLiterals">
+        <properties>
+           <property name="threshold" value="4"/>
+        </properties>
+    </rule>
+    -->
+    <rule ref="rulesets/java/strings.xml/StringInstantiation"/>
+    <rule ref="rulesets/java/strings.xml/StringToString"/>
+    <!--rule ref="rulesets/java/strings.xml/InefficientStringBuffering"/-->
+    <rule ref="rulesets/java/strings.xml/UnnecessaryCaseChange"/>
+    <rule ref="rulesets/java/strings.xml/UseStringBufferLength"/>
+    <rule ref="rulesets/java/strings.xml/AppendCharacterWithChar"/>
+    <!--
+    <rule ref="rulesets/java/strings.xml/ConsecutiveLiteralAppends">
+        <properties>
+           <property name="threshold" value="1"/>
+        </properties>
+    </rule>
+    -->
+    <!--rule ref="rulesets/java/strings.xml/UseIndexOfChar"/-->
+    <!--rule ref="rulesets/java/strings.xml/InefficientEmptyStringCheck"/-->
+    <!--rule ref="rulesets/java/strings.xml/InsufficientStringBufferDeclaration"/-->
+    <rule ref="rulesets/java/strings.xml/UselessStringValueOf"/>
+    <rule ref="rulesets/java/strings.xml/StringBufferInstantiationWithChar"/>
+    <rule ref="rulesets/java/strings.xml/UseEqualsToCompareStrings"/>
+    <!--rule ref="rulesets/java/strings.xml/AvoidStringBufferField"/-->
+    <!--====================strings Rules end======================-->
+
+
+    <!--====================unusedcode Rules begin（共4个）======================-->
+    <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateField"/>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedLocalVariable"/>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedPrivateMethod"/>
+    <rule ref="rulesets/java/unusedcode.xml/UnusedFormalParameter"/>
+    <!--====================unusedcode Rules end======================-->
+
+
+</ruleset>

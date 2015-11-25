@@ -7,6 +7,8 @@ import org.apache.commons.configuration.PropertiesConfiguration;
 import org.apache.commons.configuration.XMLConfiguration;
 import org.apache.commons.lang.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 
@@ -22,6 +24,9 @@ import java.util.Map;
  *
  */
 public class ConfigUtils {
+
+    private static final Logger LOGGER = LoggerFactory.getLogger(ConfigUtils.class);
+
     /**
      * 默认配置
      */
@@ -76,9 +81,9 @@ public class ConfigUtils {
                 }
             }
         } catch (ConfigurationException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         } catch (IOException e) {
-            e.printStackTrace();
+            LOGGER.error(e.getMessage(), e);
         }
         CACHE.put(pattern, configuration);
         return configuration;
