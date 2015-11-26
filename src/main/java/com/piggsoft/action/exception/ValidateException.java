@@ -1,8 +1,8 @@
 package com.piggsoft.action.exception;
 
 /**
- * @author piggsoft@163.com
  * Created by user on 2015/11/24.
+ * @author piggsoft@163.com
  */
 public class ValidateException extends Exception {
 

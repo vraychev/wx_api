@@ -9,9 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/19.
  * 上报地理位置事件
+ * <br>Created by user on 2015/11/19.
+ * @author piggsoft@163.com
  */
 @XmlMsgType(msgType = "event", eventType = "LOCATION")
 @XmlRootElement(name = "xml")

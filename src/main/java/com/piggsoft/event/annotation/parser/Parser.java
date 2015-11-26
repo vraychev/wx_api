@@ -16,9 +16,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/18.
  * 解析事件，消息的配置，并加入到缓存，当消息到来时，解析为java bean
+ * <br>Created by user on 2015/11/18.
+ * @author piggsoft@163.com
  */
 public class Parser {
 

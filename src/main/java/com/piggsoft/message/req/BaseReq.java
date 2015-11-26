@@ -9,8 +9,8 @@ import com.piggsoft.utils.config.ConfigUtils;
 import java.util.Map;
 
 /**
+ * <br>Created by fire pigg on 2015/11/26.
  * @author piggsoft@163.com
- *         Created by fire pigg on 2015/11/26.
  */
 public class BaseReq implements Req {
 

@@ -4,17 +4,17 @@ import com.piggsoft.message.res.AccessToken;
 import com.piggsoft.message.req.Req;
 import com.piggsoft.message.req.TokenReq;
 import com.piggsoft.utils.http.HttpMethod;
-import com.piggsoft.utils.http.UrlUtils;
+import com.piggsoft.utils.http.UrlManager;
 
 /**
- * @author piggsoft@163.com
  * Created by user on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public class TokenAction extends Action {
 
     @Override
     protected String getUrl() {
-        return UrlUtils.tokenUrl;
+        return UrlManager.getTokenUrl();
     }
 
     @Override

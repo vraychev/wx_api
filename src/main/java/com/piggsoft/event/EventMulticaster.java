@@ -19,8 +19,8 @@ import java.util.concurrent.ConcurrentHashMap;
  * 事件分发器
  * <br/> 分发接收的被动消息和事件
  * <br/> 仿造Spring的事件分发器
- * @author piggsoft@163.com
  * <br/> Created by piggsoft on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public class EventMulticaster {
 

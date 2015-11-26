@@ -5,9 +5,9 @@ import com.piggsoft.utils.bean.BeanUtils;
 import com.piggsoft.utils.config.ConfigUtils;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/20.
  * {@link ActionFactory} ActionFactory 实例获取的工具类
+ * <br>Created by user on 2015/11/20.
+ * @author piggsoft@163.com
  */
 public class ActionFactoryUtils {
 

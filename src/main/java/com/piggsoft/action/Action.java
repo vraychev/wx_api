@@ -5,22 +5,20 @@ import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.piggsoft.action.exception.ValidateException;
 import com.piggsoft.message.req.Req;
-import com.piggsoft.utils.config.ConfigUtils;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
+import com.piggsoft.utils.http.UrlManager;
 import org.apache.commons.lang3.StringUtils;
 
-import java.util.Map;
-
 /**
- * @author piggsoft@163.com
  * Created by user on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public abstract class Action {
 
     /**
      * 获取当前action对应的微信服务器的完整url
-     * <br/> 从 {@link com.piggsoft.utils.http.UrlUtils} 取
+     * <br/> 从 {@link UrlManager} 取
      * @return 完整url
      */
     protected abstract String getUrl();

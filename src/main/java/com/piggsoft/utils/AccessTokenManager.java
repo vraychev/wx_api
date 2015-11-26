@@ -10,9 +10,9 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/16.
  * AccessToken 管理器
+ * <br>Created by user on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public class AccessTokenManager {
 

@@ -8,8 +8,8 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * <br>Created by user on 2015/11/19.
  * @author piggsoft@163.com
- * Created by user on 2015/11/19.
  */
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)

@@ -18,11 +18,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author piggsoft@163.com
  * 配置工具类
  * <br/>从xml或者properties文件中读取配置
- * Created by user on 2015/11/12.
- *
+ * <br>Created by user on 2015/11/12.
+ * @author piggsoft@163.com
  */
 public class ConfigUtils {
 

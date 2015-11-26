@@ -10,7 +10,9 @@ import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
 /**
- * Created by user on 2015/11/18.
+ * 接收到消息的辨别标识
+ * <br>Created by user on 2015/11/18.
+ * @author piggsoft@163.com
  */
 @Inherited
 @Retention(RUNTIME)

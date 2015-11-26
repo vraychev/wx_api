@@ -23,8 +23,8 @@ import java.util.List;
 import java.util.Set;
 
 /**
- * @author piggsoft@163.com
  * Class 扫描
+ * @author piggsoft@163.com
  */
 public class ClassScaner implements ResourceLoaderAware {
 

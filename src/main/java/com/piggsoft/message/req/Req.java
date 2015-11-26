@@ -3,8 +3,8 @@ package com.piggsoft.message.req;
 import java.util.Map;
 
 /**
+ * <br>Created by user on 2015/11/16.
  * @author piggsoft@163.com
- * Created by user on 2015/11/16.
  */
 public interface Req {
 

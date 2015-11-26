@@ -6,19 +6,13 @@ import org.apache.commons.lang3.ClassUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.beans.BeanInfo;
-import java.beans.IntrospectionException;
-import java.beans.Introspector;
-import java.beans.PropertyDescriptor;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.Map;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/16.
  * Bean 相关的工具类
+ * <br>Created by user on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public class BeanUtils {
 

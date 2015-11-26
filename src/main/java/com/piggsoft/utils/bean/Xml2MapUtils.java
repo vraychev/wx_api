@@ -14,28 +14,37 @@ import java.util.Map;
 
 /**
  * Created by user on 2015/11/19.
+ *
+ * @author piggsoft@163.com
  */
 public class Xml2MapUtils {
 
     /**
      * xml to map
-     * @param xml
-     * @return
+     *
+     * @param xml xml string
+     * @param alias root节点的别名
+     * @return 解析后的map
      */
+    @SuppressWarnings({"rawtype", "unchecked"})
     public static Map<String, String> xml2Map(String xml, String alias) {
         XStream magicApi = new XStream();
         magicApi.registerConverter(new MapEntryConverter());
         magicApi.alias(alias, Map.class);
-        Map<String, String> extractedMap = (Map<String, String>) magicApi.fromXML(xml);
-        return extractedMap;
+        return (Map<String, String>) magicApi.fromXML(xml);
     }
 
+    /**
+     * Map Converter
+     */
     public static class MapEntryConverter implements Converter {
 
+        @Override
         public boolean canConvert(Class clazz) {
             return AbstractMap.class.isAssignableFrom(clazz);
         }
 
+        @Override
         public void marshal(Object value, HierarchicalStreamWriter writer, MarshallingContext context) {
 
             AbstractMap map = (AbstractMap) value;
@@ -43,7 +52,7 @@ public class Xml2MapUtils {
                 Map.Entry entry = (Map.Entry) obj;
                 writer.startNode(entry.getKey().toString());
                 Object val = entry.getValue();
-                if ( null != val ) {
+                if (null != val) {
                     writer.setValue(val.toString());
                 }
                 writer.endNode();
@@ -51,11 +60,12 @@ public class Xml2MapUtils {
 
         }
 
+        @Override
         public Object unmarshal(HierarchicalStreamReader reader, UnmarshallingContext context) {
 
             Map<String, String> map = new HashMap<String, String>();
 
-            while(reader.hasMoreChildren()) {
+            while (reader.hasMoreChildren()) {
                 reader.moveDown();
 
                 String key = StringUtils.uncapitalize(reader.getNodeName()); // nodeName aka element's name

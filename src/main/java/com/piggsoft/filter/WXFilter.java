@@ -25,26 +25,40 @@ import java.nio.charset.Charset;
 import java.util.List;
 
 /**
+ * WX 拦截器
  * Created by user on 2015/11/16.
+ * @author piggsoft@163.com
  */
 public class WXFilter implements Filter {
 
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(WXFilter.class);
 
-    //配置文件的路径，默认是classpath下
+    /**
+     * 配置文件的路径，默认是classpath下
+     */
     private static String WX_CONFIG_FILE = ConfigUtils.getConfig().getString("wx_config_file");
 
-    //事件分发器
-    public EventMulticaster multicaster = new EventMulticaster();
+    /**
+     * 事件分发器
+     */
+    private EventMulticaster multicaster = new EventMulticaster();
 
     //多线程任务管理器
     //private static final ExecutorService service = Executors.newCachedThreadPool();
 
+    @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         init();
 
     }
 
+    /**
+     * 进行出事化工作
+     * <br>读取配置文件，加载listener缓存
+     */
     public void init() {
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("WXFilter 开始初始化");
@@ -52,6 +66,10 @@ public class WXFilter implements Filter {
         Configuration configuration = ConfigUtils.getConfig(WX_CONFIG_FILE);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("读取配置xml文件完成");
+        }
+        if (null == configuration) {
+            LOGGER.error("读取配置xml文件失败");
+            return;
         }
         XMLConfiguration xmlConfig = (XMLConfiguration)configuration;
         List<HierarchicalConfiguration> hierarchicalConfigurations = xmlConfig.configurationsAt("listeners.listener");
@@ -66,7 +84,7 @@ public class WXFilter implements Filter {
             LOGGER.debug("WXFilter 初始化结束");
         }
     }
-
+    @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String content = StreamUtils.copyToString(servletRequest.getInputStream(), Charset.forName("UTF-8"));
         if (LOGGER.isDebugEnabled()) {
@@ -99,6 +117,7 @@ public class WXFilter implements Filter {
         }
     }
 
+    @Override
     public void destroy() {
 
     }

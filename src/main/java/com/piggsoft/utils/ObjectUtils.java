@@ -6,8 +6,8 @@ import org.apache.commons.lang3.StringUtils;
 import java.util.Collection;
 
 /**
+ * <br>Created by fire pigg on 2015/11/26.
  * @author piggsoft@163.com
- *         Created by fire pigg on 2015/11/26.
  */
 public class ObjectUtils {
     /**

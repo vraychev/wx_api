@@ -9,14 +9,17 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * @author piggsoft@163.com
- * Created by user on 2015/11/19.
  * 点击菜单跳转链接时的事件推送
+ * <br>Created by user on 2015/11/19.
+ * @author piggsoft@163.com
  */
 @XmlMsgType(msgType = "event", eventType = "VIEW")
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ViewEvent extends EventMsg {
+    /**
+     * 事件KEY值，设置的跳转URL
+     */
     @XmlElement(name = "EventKey")
     private String eventKey;
 

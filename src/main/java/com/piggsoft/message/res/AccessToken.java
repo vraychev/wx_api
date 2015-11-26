@@ -3,8 +3,8 @@ package com.piggsoft.message.res;
 import com.alibaba.fastjson.annotation.JSONField;
 
 /**
+ * <br>Created by user on 2015/11/24.
  * @author piggsoft@163.com
- * Created by user on 2015/11/24.
  */
 public class AccessToken {
     /**
