@@ -149,9 +149,10 @@ public class EventMulticaster {
 
         @Override
         public boolean equals(Object other) {
-            if (this == other) {
-                return true;
+            if (other == null || !(other instanceof ListenerCacheKey)) {
+                return false;
             }
+
             ListenerCacheKey otherKey = (ListenerCacheKey) other;
             return ObjectUtils.nullSafeEquals(this.eventType, otherKey.eventType) &&
                     ObjectUtils.nullSafeEquals(this.sourceType, otherKey.sourceType);
@@ -167,7 +168,7 @@ public class EventMulticaster {
      * 检索器
      * <br> 对listener进行处理
      */
-    private final class ListenerRetriever {
+    private static final class ListenerRetriever {
 
         /**
          * 监听器缓存
