@@ -2,32 +2,48 @@ package com.piggsoft.event.annotation.parser;
 
 import com.piggsoft.event.WXEvent;
 import com.piggsoft.event.annotation.XmlMsgType;
-import com.piggsoft.utils.config.ConfigUtils;
+import com.piggsoft.utils.bean.BeanUtils;
 import com.piggsoft.utils.bean.Xml2MapUtils;
-import org.apache.commons.beanutils.BeanUtils;
+import com.piggsoft.utils.config.ConfigUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/18.
+ * 解析事件，消息的配置，并加入到缓存，当消息到来时，解析为java bean
  */
 public class Parser {
 
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(Parser.class);
 
+    /**
+     * type == event 即为事件类型
+     */
     public static final String EVENT_TYPE = "event";
 
-    public static final Map<String, Class> cache = new HashMap<String, Class>();
-    public static final Map<String, Class> event_cache = new HashMap<String, Class>();
-    public static final Map<String, String[]> event_condition_cache = new HashMap<String, String[]>();
+    /**
+     * 消息的解析缓存
+     */
+    public static final Map<String, Class> MSG_CACHE = new HashMap<String, Class>();
+    /**
+     * 事件的解析缓存
+     */
+    public static final Map<String, Class> EVENT_CACHE = new HashMap<String, Class>();
+    /**
+     * 事件非空条件的解析缓存
+     */
+    public static final Map<String, String[]> EVENT_CONDITION_CACHE = new HashMap<String, String[]>();
 
     static {
         initCache();
@@ -35,8 +51,8 @@ public class Parser {
 
     /**
      * 对报文进行解析
-     * @param content
-     * @return
+     * @param content 消息
+     * @return 解析后{@link WXEvent}
      */
     public static WXEvent parse(String content) {
         Map<String, String> msg = Xml2MapUtils.xml2Map(content, "xml");
@@ -44,21 +60,21 @@ public class Parser {
         String eventType = msg.get("event");
         //是推送事件
         if (EVENT_TYPE.equals(msgType) && StringUtils.isNotEmpty(eventType)) {
-            String[] event_conditions = event_condition_cache.get(eventType);
+            String[] eventConditions = EVENT_CONDITION_CACHE.get(eventType);
             //根据事件类型和时间条件来判断具体是哪个事件
-            Class clazz = getEventClass(msg, eventType, event_conditions);
+            Class clazz = getEventClass(msg, eventType, eventConditions);
             return createBean(clazz, msg);
 
         } else { //是消息
             //从cache中取到对应的class
-            Class clazz = cache.get(msgType);
+            Class clazz = MSG_CACHE.get(msgType);
             return createBean(clazz, msg);
 
         }
     }
 
     /**
-     *
+     * 获取本次事件对应的java bean
      * @param msg 报文解析后的map
      * @param eventType 事件类型
      * @param event_conditions 事件条件
@@ -74,36 +90,33 @@ public class Parser {
                 }
             }
             if (isValidate) {
-                return event_cache.get(eventType + "," + StringUtils.join(event_conditions, ","));
+                return EVENT_CACHE.get(eventType + "," + StringUtils.join(event_conditions, ","));
             } else {
-                return event_cache.get(eventType);
+                return EVENT_CACHE.get(eventType);
             }
         } else {
-            return event_cache.get(eventType);
+            return EVENT_CACHE.get(eventType);
         }
     }
 
+    /**
+     * 根据class生成一个{@link WXEvent}
+     * @param clazz 缓存中的class
+     * @param msg 解析成map的消息
+     * @return {@link WXEvent}
+     */
     private static WXEvent createBean(Class clazz, Map<String, String> msg) {
         if (clazz == null) {
             return null;
         }
-        try {
-            Object o = clazz.newInstance();
-            //将map的
-            BeanUtils.populate(o, msg);
-            return (WXEvent)o;
-        } catch (InstantiationException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (IllegalAccessException e) {
-            LOGGER.error(e.getMessage(), e);
-        } catch (InvocationTargetException e) {
-            LOGGER.error(e.getMessage(), e);
-        }
-        return null;
+        WXEvent wxEvent = (WXEvent) BeanUtils.mapToBean(clazz, msg);
+        return wxEvent;
     }
 
 
-
+    /**
+     * 初始化缓存
+     */
     private static void initCache() {
         Set<Class> classes = scanFieldClass();
         if (CollectionUtils.isEmpty(classes)) {
@@ -117,58 +130,23 @@ public class Parser {
                 if (ArrayUtils.isNotEmpty(xmlMsgType.eventCondition())) {
                     String condition = StringUtils.join(xmlMsgType.eventCondition(), ",");
                     //cache中放入对照关系
-                    event_cache.put(xmlMsgType.eventType() + "," + condition, clazz);
-                    event_condition_cache.put(xmlMsgType.eventType(), xmlMsgType.eventCondition());
+                    EVENT_CACHE.put(xmlMsgType.eventType() + "," + condition, clazz);
+                    EVENT_CONDITION_CACHE.put(xmlMsgType.eventType(), xmlMsgType.eventCondition());
                 } else {
-                    event_cache.put(xmlMsgType.eventType(), clazz);
+                    EVENT_CACHE.put(xmlMsgType.eventType(), clazz);
                 }
             } else {
-                cache.put(xmlMsgType.msgType(), clazz);
+                MSG_CACHE.put(xmlMsgType.msgType(), clazz);
             }
         }
     }
 
     /**
      * 根据配置，扫描指定包下面的类，找到所有 标有{@link XmlMsgType}注解的类
-     * @return
+     * @return {@link Set<Class>}
      */
     private static Set<Class> scanFieldClass() {
         return ClassScaner.scan(ConfigUtils.getConfig().getString("event.package"), XmlMsgType.class);
-    }
-
-
-    public static void main(String[] args) throws Exception {
-        String s = "<xml>\n" +
-                " <ToUserName><![CDATA[toUser]]></ToUserName>\n" +
-                " <FromUserName><![CDATA[fromUser]]></FromUserName> \n" +
-                " <CreateTime>1348831860</CreateTime>\n" +
-                " <MsgType><![CDATA[text]]></MsgType>\n" +
-                " <Content><![CDATA[this is a test]]></Content>\n" +
-                " <MsgId>1234567890123456</MsgId>\n" +
-                " </xml>\n";
-        WXEvent event = parse(s);
-        System.out.println(event);
-
-        s = "<xml>\n" +
-                "<ToUserName><![CDATA[toUser]]></ToUserName>\n" +
-                "<FromUserName><![CDATA[FromUser]]></FromUserName>\n" +
-                "<CreateTime>123456789</CreateTime>\n" +
-                "<MsgType><![CDATA[event]]></MsgType>\n" +
-                "<Event><![CDATA[subscribe]]></Event>\n" +
-                "</xml>\n";
-        event = parse(s);
-        System.out.println(event);
-
-        s = "<xml><ToUserName><![CDATA[toUser]]></ToUserName>\n" +
-                "<FromUserName><![CDATA[FromUser]]></FromUserName>\n" +
-                "<CreateTime>123456789</CreateTime>\n" +
-                "<MsgType><![CDATA[event]]></MsgType>\n" +
-                "<Event><![CDATA[subscribe]]></Event>\n" +
-                "<EventKey><![CDATA[qrscene_123123]]></EventKey>\n" +
-                "<Ticket><![CDATA[TICKET]]></Ticket>\n" +
-                "</xml>";
-        event = parse(s);
-        System.out.println(event);
     }
 
 }

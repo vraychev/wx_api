@@ -1,4 +1,4 @@
-package com.piggsoft.action.bean.rsp;
+package com.piggsoft.message.res;
 
 import com.alibaba.fastjson.annotation.JSONField;
 

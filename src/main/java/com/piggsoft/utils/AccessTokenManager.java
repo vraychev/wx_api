@@ -1,6 +1,6 @@
 package com.piggsoft.utils;
 
-import com.piggsoft.action.bean.rsp.AccessToken;
+import com.piggsoft.message.res.AccessToken;
 import com.piggsoft.action.exception.ValidateException;
 import com.piggsoft.utils.factory.ActionFactoryUtils;
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class AccessTokenManager {
     }
 
     /**
-     * 清理accessToken cache
+     * 清理accessToken MSG_CACHE
      */
     private static synchronized void clearCache() {
         AccessTokenManager.ACCESS_TOKEN_CACHE = null;

@@ -8,7 +8,9 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/19.
+ * 地理位置消息
  */
 @XmlMsgType(msgType = "location")
 @XmlRootElement(name = "xml")

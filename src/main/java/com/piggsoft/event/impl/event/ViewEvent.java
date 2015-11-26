@@ -9,7 +9,9 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/19.
+ * 点击菜单跳转链接时的事件推送
  */
 @XmlMsgType(msgType = "event", eventType = "VIEW")
 @XmlRootElement(name = "xml")

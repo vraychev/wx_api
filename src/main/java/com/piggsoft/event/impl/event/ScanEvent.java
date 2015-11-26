@@ -9,14 +9,22 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/19.
+ * 扫描带参数二维码事件
  */
 @XmlMsgType(msgType = "event", eventType = "SCAN")
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class ScanEvent extends EventMsg {
+    /**
+     * 事件KEY值，qrscene_为前缀，后面为二维码的参数值
+     */
     @XmlElement(name = "EventKey")
     private String eventKey;
+    /**
+     * 二维码的ticket，可用来换取二维码图片
+     */
     @XmlElement(name = "Ticket")
     private String ticket;
 

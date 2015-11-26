@@ -1,11 +1,10 @@
 package com.piggsoft.action;
 
-import com.piggsoft.action.bean.rsp.AccessToken;
+import com.piggsoft.message.res.AccessToken;
+import com.piggsoft.message.req.Req;
+import com.piggsoft.message.req.TokenReq;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.UrlUtils;
-
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * @author piggsoft@163.com
@@ -19,10 +18,8 @@ public class TokenAction extends Action {
     }
 
     @Override
-    protected Map<String, Object> getParams() {
-        Map<String, Object> map = new HashMap<String, Object>();
-        map.put("grant_type", "client_credential");
-        return map;
+    protected Req getReq() {
+        return new TokenReq();
     }
 
     @Override

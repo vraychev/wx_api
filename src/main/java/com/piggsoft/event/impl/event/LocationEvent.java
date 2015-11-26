@@ -9,16 +9,27 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/19.
+ * 上报地理位置事件
  */
 @XmlMsgType(msgType = "event", eventType = "LOCATION")
 @XmlRootElement(name = "xml")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LocationEvent extends EventMsg {
+    /**
+     * 地理位置纬度
+     */
     @XmlElement(name = "Latitude")
     private String latitude;
+    /**
+     * 地理位置经度
+     */
     @XmlElement(name = "Longitude")
     private String longitude;
+    /**
+     * 地理位置精度
+     */
     @XmlElement(name = "Precision")
     private String precision;
 

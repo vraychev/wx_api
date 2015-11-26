@@ -18,6 +18,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 /**
+ * @author piggsoft@163.com
  * 配置工具类
  * <br/>从xml或者properties文件中读取配置
  * Created by user on 2015/11/12.
@@ -25,6 +26,9 @@ import java.util.Map;
  */
 public class ConfigUtils {
 
+    /**
+     * logger
+     */
     private static final Logger LOGGER = LoggerFactory.getLogger(ConfigUtils.class);
 
     /**
@@ -36,9 +40,9 @@ public class ConfigUtils {
      */
     private static final Map<String, Configuration> CACHE = new HashMap<String, Configuration>();
     /**
-     * lock
+     * LOCK
      */
-    private static Object lock = new Object();
+    private static Object LOCK = new Object();
 
     static {
         createConfiguration(NAME_PATTERN);
@@ -46,8 +50,8 @@ public class ConfigUtils {
 
     /**
      * 获取配置
-     * @param pattern
-     * @return
+     * @param pattern 路径正则
+     * @return {@link Configuration}
      */
     public static Configuration getConfig(String pattern) {
         if (StringUtils.isEmpty(pattern)) {
@@ -56,7 +60,7 @@ public class ConfigUtils {
         if (CACHE.containsKey(pattern)) {
             return CACHE.get(pattern);
         } else {
-            synchronized (lock) {
+            synchronized (LOCK) {
                 if (CACHE.containsKey(pattern)) {
                     return CACHE.get(pattern);
                 } else {
@@ -66,6 +70,11 @@ public class ConfigUtils {
         }
     }
 
+    /**
+     * 根据pattern获取配置
+     * @param pattern 路径正则
+     * @return {@link Configuration}
+     */
     protected static Configuration createConfiguration(String pattern) {
         Configuration configuration = null;
         try {
@@ -89,13 +98,21 @@ public class ConfigUtils {
         return configuration;
     }
 
+    /**
+     * 根据后缀名来实例不同的{@link Configuration}
+     * <br/>{@link PropertiesConfiguration}, {@link XMLConfiguration}
+     * @param file 配置文件
+     * @return {@link Configuration} or null
+     * @throws ConfigurationException  ConfigurationException
+     */
     protected static Configuration createConfiguration(File file) throws ConfigurationException {
+        Configuration configuration = null;
         if (StringUtils.endsWith(file.getName(), ".properties")) {
-           return new PropertiesConfiguration(file);
+            configuration = new PropertiesConfiguration(file);
         } else if (StringUtils.endsWith(file.getName(), ".xml")) {
-            return new XMLConfiguration(file);
+            configuration = new XMLConfiguration(file);
         }
-        return null;
+        return configuration;
     }
 
     public static Configuration getConfig() {

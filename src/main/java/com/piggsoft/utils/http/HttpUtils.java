@@ -1,6 +1,7 @@
 package com.piggsoft.utils.http;
 
 import com.alibaba.fastjson.JSON;
+import com.piggsoft.utils.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -32,71 +33,138 @@ import java.util.List;
 import java.util.Map;
 
 /**
+ * @author piggsoft@163.com
  * Created by user on 2015/11/16.
+ * http 请求的工具类
  */
 public class HttpUtils {
 
-    private static final Logger logger = LoggerFactory.getLogger(HttpUtils.class);
+    /**LOGGER**/
+    private static final Logger LOGGER = LoggerFactory.getLogger(HttpUtils.class);
 
-    private static int timeout = 10 * 1000;
+    /**
+     * 连接超时时间，单位毫秒
+     */
+    private static int TIMEOUT = 10 * 1000;
 
+    /**
+     * 默认的字符编码
+     */
     private static final String DEFAULT_ENCODING = "UTF-8";
 
+    /**
+     * 公共的请求配置
+     */
     private static final RequestConfig CONFIG = RequestConfig.custom()
-            .setConnectionRequestTimeout(timeout).setConnectTimeout(timeout)
-            .setSocketTimeout(timeout).build();
+            .setConnectionRequestTimeout(TIMEOUT).setConnectTimeout(TIMEOUT)
+            .setSocketTimeout(TIMEOUT).build();
 
-    private static ResponseHandler responseHandler = new ResponseHandler();
+    /**
+     * reponse 回调
+     */
+    private static ResponseHandler RESPONSE_HANDLER = new ResponseHandler();
 
+    /**
+     * post 请求
+     * @param url 请求地址
+     * @param params 参数
+     * @return response string
+     */
     public static String post(String url, Map<String, Object> params) {
         return post(url, DEFAULT_ENCODING, params, null);
     }
 
+    /**
+     * post 请求
+     * @param url 请求地址
+     * @param content post内容
+     * @return response string
+     */
     public static String post(String url, String content) {
         return post(url, DEFAULT_ENCODING, null, content);
     }
 
+    /**
+     * post 请求
+     * @param url 请求地址
+     * @param charset 字符集
+     * @param params 参数
+     * @param content post内容
+     * @return response string
+     */
     public static String post(String url, String charset, Map<String, Object> params, String content) {
-        return _post(url, charset, params, content);
+        return doPost(url, charset, params, content);
     }
 
-    private static String _post(String url, String charset, Map<String, Object> params, String content) throws HttpException {
+    /**
+     * post 请求
+     * @param url 请求地址
+     * @param charset 字符集
+     * @param params 参数
+     * @param content post内容
+     * @throws HttpException HttpException
+     * @return response string
+     */
+    private static String doPost(String url, String charset, Map<String, Object> params, String content) throws HttpException {
         try {
             HttpEntity httpEntity = getEntity(params, content, charset);
             return post(url, httpEntity);
         } catch (UnsupportedEncodingException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         }
     }
 
+    /**
+     * 解析参数类信息到httpEntity， params ， content， charset 都为非必传
+     * @param params 参数
+     * @param content post内容
+     * @param charset 字符集
+     * @return {@link HttpEntity}
+     * @throws UnsupportedEncodingException UnsupportedEncodingException
+     */
     private static HttpEntity getEntity(Map<String, Object> params, String content, String charset) throws UnsupportedEncodingException {
         if (params != null && !params.isEmpty()) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", JSON.toJSONString(params), charset);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("请求：params({});chartset({})", JSON.toJSONString(params), charset);
             }
-            List<NameValuePair> _params = new ArrayList<NameValuePair>();
+            List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                _params.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+                if (ObjectUtils.isNotEmpty(entry.getValue())) {
+                    nameValuePairs.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
+                }
             }
-            return new UrlEncodedFormEntity(_params, charset);
+            return new UrlEncodedFormEntity(nameValuePairs, charset);
         }
         if (StringUtils.isNotEmpty(content)) {
-            if (logger.isDebugEnabled()) {
-                logger.debug("请求：params({});chartset({})", content, charset);
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("请求：params({});chartset({})", content, charset);
             }
             return new StringEntity(content, ContentType.create("application/x-www-form-urlencoded", Charset.forName(charset)));
         }
-        if (logger.isDebugEnabled()) {
-            logger.debug("请求：没有参数");
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("请求：没有参数");
         }
         return new StringEntity("");
     }
 
+    /**
+     * get 请求
+     * @param url 请求地址
+     * @param params 参数
+     * @return response string
+     */
     public static String get(String url, Map<String, Object> params) {
         return get(url, params, DEFAULT_ENCODING);
     }
 
+    /**
+     * get 请求
+     * @param url 请求地址
+     * @param params 参数
+     * @param encoding 字符集
+     * @return response string
+     */
     public static String get(String url, Map<String, Object> params, String encoding) {
         CloseableHttpClient httpClient = null;
         HttpUriRequest get = null;
@@ -107,49 +175,63 @@ public class HttpUtils {
             requestBuilder.setUri(url);
             requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                if (logger.isDebugEnabled()) {
-                  logger.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+                if (ObjectUtils.isNotEmpty(entry.getValue())) {
+                    requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
                 }
-                requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+                }
             }
             get = requestBuilder.build();
-            if (logger.isDebugEnabled()) {
-                logger.debug("Send Request : {}", get.getRequestLine().toString());
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Send Request : {}", get.getRequestLine().toString());
             }
             /*CloseableHttpResponse response = httpClient.execute(request);
             HttpEntity entity = response.getEntity();
             result = EntityUtils.toString(entity, encoding);*/
-            result = httpClient.execute(get, responseHandler);
+            result = httpClient.execute(get, RESPONSE_HANDLER);
         } catch (ClientProtocolException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         } finally {
             if (httpClient != null) {
                 try {
                     httpClient.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                 }
             }
         }
         return result;
     }
 
+    /**
+     * 文件上传
+     * @param url 请求地址
+     * @param file 要上传的文件
+     * @return response string
+     */
     public static String postChunk(String url, File file) {
         try {
             InputStreamEntity httpEntity = new InputStreamEntity(
                     new FileInputStream(file), -1, ContentType.APPLICATION_OCTET_STREAM);
             return post(url, httpEntity);
         } catch (FileNotFoundException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         }
     }
 
 
+    /**
+     * post请求
+     * @param url 请求地址
+     * @param entity {@link HttpEntity}
+     * @return response string
+     */
     public static String post(String url, HttpEntity entity) {
         CloseableHttpClient httpClient = null;
         HttpPost post = null;
@@ -163,12 +245,12 @@ public class HttpUtils {
             //post.setHeader("Content-Type", "text/xml;charset=" + charset);
             /*CloseableHttpResponse response = httpClient.execute(post);
             responseMessage = EntityUtils.toString(response.getEntity(), Charset.forName(charset));*/
-            responseMessage = httpClient.execute(post, responseHandler);
+            responseMessage = httpClient.execute(post, RESPONSE_HANDLER);
         } catch (ClientProtocolException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         } catch (IOException e) {
-            logger.error(e.getMessage(), e);
+            LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
         } finally {
             if (post != null) {
@@ -178,7 +260,7 @@ public class HttpUtils {
                 try {
                     httpClient.close();
                 } catch (IOException e) {
-                    logger.error(e.getMessage(), e);
+                    LOGGER.error(e.getMessage(), e);
                     throw new HttpException(e);
                 }
             }
@@ -188,6 +270,12 @@ public class HttpUtils {
 
 
     static class ResponseHandler implements org.apache.http.client.ResponseHandler<String> {
+        /**
+         * 对请求结果作初步处理
+         * @param response 请求返回的结果
+         * @return response string
+         * @throws IOException IOException
+         */
         public String handleResponse(HttpResponse response) throws IOException {
             int status = response.getStatusLine().getStatusCode();
             if (status >= 200 && status < 300) {

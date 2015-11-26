@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.piggsoft.action.exception.ValidateException;
+import com.piggsoft.message.req.Req;
 import com.piggsoft.utils.config.ConfigUtils;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
@@ -26,9 +27,9 @@ public abstract class Action {
 
     /**
      * 获取本次操作需要传说的参数
-     * @return 装载参数的map
+     * @return 装载参数的req
      */
-    protected abstract Map<String, Object> getParams();
+    protected abstract Req getReq();
 
     /**
      * 获取http的方式
@@ -51,16 +52,16 @@ public abstract class Action {
      */
     public <T> T action() throws ValidateException {
         String url = getUrl();
-        Map<String, Object> params = getParams();
+        Req req = getReq();
         HttpMethod method = getHttpMethod();
-        preAction(url, params, method);
+        preAction(url, req, method);
         String result = null;
         switch (method) {
             case GET :
-                result = HttpUtils.get(url, params);
+                result = HttpUtils.get(url, req.toParams());
                 break;
             case POST:
-                result = HttpUtils.post(url, params);
+                result = HttpUtils.post(url, req.toParams());
                 break;
             default:
                 break;
@@ -82,12 +83,10 @@ public abstract class Action {
     /**
      * 请求发出之间的操作
      * @param url 完整的url
-     * @param params 参数
+     * @param req req
      * @param method http method
      */
-    protected void preAction(String url, Map<String, Object> params, HttpMethod method) {
-        params.put("appid", ConfigUtils.getConfig().getString("appid"));
-        params.put("secret", ConfigUtils.getConfig().getString("secret"));
+    protected void preAction(String url, Req req, HttpMethod method) {
     }
 
     /**

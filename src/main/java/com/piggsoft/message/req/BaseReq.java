@@ -2,6 +2,7 @@ package com.piggsoft.message.req;
 
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.annotation.JSONField;
+import com.piggsoft.utils.AccessTokenManager;
 import com.piggsoft.utils.bean.BeanUtils;
 import com.piggsoft.utils.config.ConfigUtils;
 
@@ -9,9 +10,10 @@ import java.util.Map;
 
 /**
  * @author piggsoft@163.com
- * Created by user on 2015/11/16.
+ *         Created by fire pigg on 2015/11/26.
  */
-public class TokenReq implements Req {
+public class BaseReq implements Req {
+
 
     /**
      * 静态APP_ID
@@ -32,15 +34,15 @@ public class TokenReq implements Req {
      */
     private String secret;
     /**
-     * grant_type
+     * accessToken
      */
-    @JSONField(name = "grant_type")
-    private String grantType;
+    @JSONField(name = "access_token")
+    private String accessToken;
 
-    public TokenReq() {
+    public BaseReq() {
+        this.accessToken = AccessTokenManager.getAccessToken();
         this.appid = APP_ID;
         this.secret = SECRET;
-        this.grantType = "client_credential";
     }
 
     public String getAppid() {
@@ -59,12 +61,12 @@ public class TokenReq implements Req {
         this.secret = secret;
     }
 
-    public String getGrantType() {
-        return grantType;
+    public String getAccessToken() {
+        return accessToken;
     }
 
-    public void setGrantType(String grantType) {
-        this.grantType = grantType;
+    public void setAccessToken(String accessToken) {
+        this.accessToken = accessToken;
     }
 
     /**
@@ -79,4 +81,5 @@ public class TokenReq implements Req {
     public String toString() {
         return JSON.toJSONString(this);
     }
+
 }
