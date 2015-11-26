@@ -14,25 +14,6 @@ import java.util.Map;
  */
 public class BaseReq implements Req {
 
-
-    /**
-     * 静态APP_ID
-     */
-    private static final String APP_ID = ConfigUtils.getConfig().getString("appid");
-
-    /**
-     * 静态SECRET
-     */
-    private static final String SECRET = ConfigUtils.getConfig().getString("secret");
-
-    /**
-     * appid
-     */
-    private String appid;
-    /**
-     * secret
-     */
-    private String secret;
     /**
      * accessToken
      */
@@ -41,24 +22,6 @@ public class BaseReq implements Req {
 
     public BaseReq() {
         this.accessToken = AccessTokenManager.getAccessToken();
-        this.appid = APP_ID;
-        this.secret = SECRET;
-    }
-
-    public String getAppid() {
-        return appid;
-    }
-
-    public void setAppid(String appid) {
-        this.appid = appid;
-    }
-
-    public String getSecret() {
-        return secret;
-    }
-
-    public void setSecret(String secret) {
-        this.secret = secret;
     }
 
     public String getAccessToken() {
