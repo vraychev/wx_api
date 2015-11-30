@@ -8,6 +8,7 @@ import com.piggsoft.message.req.Req;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
 import com.piggsoft.utils.http.UrlManager;
+import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
 /**
@@ -15,6 +16,8 @@ import org.apache.commons.lang3.StringUtils;
  * @author piggsoft@163.com
  */
 public abstract class Action {
+
+    private static final String[] SUCCESS_CODES = {"0"};
 
     /**
      * 获取当前action对应的微信服务器的完整url
@@ -94,7 +97,7 @@ public abstract class Action {
      */
     protected void validate(JSONObject jsonObject) throws ValidateException {
         String errcode = jsonObject.getString("errcode");
-        if (StringUtils.isNotEmpty(errcode)) {
+        if (StringUtils.isNotEmpty(errcode) && !ArrayUtils.contains(SUCCESS_CODES, errcode)) {
             String errmsg = jsonObject.getString("errmsg");
             throw new ValidateException(errcode, errmsg);
         }
