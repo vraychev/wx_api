@@ -1,7 +1,8 @@
 #微信SDK
 
 ##写在之前
-[微信公众平台开发者文档](http://mp.weixin.qq.com/wiki/home/index.html)
+* [微信公众平台开发者文档](http://mp.weixin.qq.com/wiki/home/index.html)
+* [Demo](http://git.oschina.net/piggsoft/WX_API_demo)
 ####Get Start
 1. 引入包
 2. 在web.xml中加入,用来接收来自微信服务器发送过来的消息
