@@ -137,7 +137,7 @@ public class EventMulticaster implements InitializingBean {
 
     /**
      * set wxEventListeners
-     * @param wxEventListeners
+     * @param wxEventListeners wxEventListeners
      */
     public void setWxEventListeners(WXEventListener[] wxEventListeners) {
         this.wxEventListeners = wxEventListeners;

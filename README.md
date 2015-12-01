@@ -44,7 +44,7 @@ wx.properties 是整个SDK包的主配置文件，可以覆盖其中的任意配
          xsi:schemaLocation="http://www.springframework.org/schema/beans
           http://www.springframework.org/schema/beans/spring-beans.xsd
           http://www.springframework.org/schema/context
-  		http://www.springframework.org/schema/context/spring-context-3.0.xsd">
+  		http://www.springframework.org/schema/context/spring.xsd">
   
       <bean class="com.piggsoft.listener.TextWXEventListenerTest"/>
   
