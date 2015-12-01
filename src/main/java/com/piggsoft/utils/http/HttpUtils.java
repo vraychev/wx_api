@@ -23,11 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -162,6 +158,15 @@ public class HttpUtils {
     /**
      * get 请求
      * @param url 请求地址
+     * @return response string
+     */
+    public static String get(String url) {
+        return get(url, null, DEFAULT_ENCODING);
+    }
+
+    /**
+     * get 请求
+     * @param url 请求地址
      * @param params 参数
      * @param encoding 字符集
      * @return response string
@@ -175,12 +180,14 @@ public class HttpUtils {
             RequestBuilder requestBuilder = RequestBuilder.get();
             requestBuilder.setUri(url);
             requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
-            for (Map.Entry<String, Object> entry : params.entrySet()) {
-                if (!ObjectUtils.isEmpty(entry.getValue())) {
-                    requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
-                }
-                if (LOGGER.isDebugEnabled()) {
-                    LOGGER.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+            if (null != params && !params.isEmpty()) {
+                for (Map.Entry<String, Object> entry : params.entrySet()) {
+                    if (!ObjectUtils.isEmpty(entry.getValue())) {
+                        requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
+                    }
+                    if (LOGGER.isDebugEnabled()) {
+                        LOGGER.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
+                    }
                 }
             }
             get = requestBuilder.build();

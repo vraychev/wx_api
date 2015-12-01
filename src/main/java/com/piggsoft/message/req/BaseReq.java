@@ -14,24 +14,6 @@ import java.util.Map;
 public class BaseReq implements Req {
 
     /**
-     * accessToken
-     */
-    @JSONField(name = "access_token")
-    private String accessToken;
-
-    public BaseReq() {
-        this.accessToken = AccessTokenManager.getAccessToken();
-    }
-
-    public String getAccessToken() {
-        return accessToken;
-    }
-
-    public void setAccessToken(String accessToken) {
-        this.accessToken = accessToken;
-    }
-
-    /**
      * 转换为map
      * @return 转换后的map
      */
