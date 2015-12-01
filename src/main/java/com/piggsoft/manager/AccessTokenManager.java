@@ -1,8 +1,10 @@
-package com.piggsoft.utils;
+package com.piggsoft.manager;
 
+import com.piggsoft.configuration.ActionMulticaster;
+import com.piggsoft.configuration.Context;
+import com.piggsoft.message.req.TokenReq;
 import com.piggsoft.message.res.AccessToken;
-import com.piggsoft.action.exception.ValidateException;
-import com.piggsoft.utils.factory.ActionFactoryUtils;
+import com.piggsoft.exception.ValidateException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -25,11 +27,6 @@ public class AccessTokenManager {
      * {@link AccessToken} 缓存副本
      */
     private static AccessToken ACCESS_TOKEN_CACHE = null;
-
-    /**
-     * 参数名，提供给其他类使用
-     */
-    public static final String ACCESS_TOKEN_KEY = "access_token";
 
     /**
      * 获取accessToken
@@ -55,7 +52,9 @@ public class AccessTokenManager {
      */
     private static AccessToken getAccessTokenFromWX() {
         try {
-            return ActionFactoryUtils.getActionFactory().getTokenAction().action();
+            TokenReq req = new TokenReq();
+            ActionMulticaster multicaster = Context.getContext().getBean(ActionMulticaster.class);
+            return multicaster.multicast(req);
         } catch (ValidateException e) {
             LOGGER.error(e.getMessage(), e);
         }
@@ -76,7 +75,7 @@ public class AccessTokenManager {
     }
 
     /**
-     * 清理accessToken MSG_CACHE
+     * 清理accessToken msgCache
      */
     private static synchronized void clearCache() {
         AccessTokenManager.ACCESS_TOKEN_CACHE = null;

@@ -1,6 +1,6 @@
 package com.piggsoft.event.impl.event;
 
-import com.piggsoft.event.annotation.XmlMsgType;
+import com.piggsoft.annotation.XmlMsgType;
 import com.piggsoft.event.impl.EventMsg;
 
 import javax.xml.bind.annotation.XmlAccessType;

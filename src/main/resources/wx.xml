@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<configuration>
-    <listeners>
-        <listener>com.piggsoft.listener.TextWXEventListener</listener>
-    </listeners>
-</configuration>

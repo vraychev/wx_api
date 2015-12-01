@@ -1,4 +1,4 @@
-package com.piggsoft.utils.http;
+package com.piggsoft.exception;
 
 /**
  * @author piggsoft@163.com

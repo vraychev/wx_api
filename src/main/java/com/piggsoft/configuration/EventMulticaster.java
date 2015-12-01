@@ -1,11 +1,15 @@
-package com.piggsoft.event;
+package com.piggsoft.configuration;
 
 import com.alibaba.fastjson.JSON;
+import com.piggsoft.event.WXEvent;
 import com.piggsoft.listener.WXEventListener;
 import com.piggsoft.utils.bean.BeanUtils;
 import org.apache.commons.collections.CollectionUtils;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.GenericTypeResolver;
 import org.springframework.core.OrderComparator;
+import org.springframework.stereotype.Component;
 import org.springframework.util.ObjectUtils;
 
 import java.util.Collection;
@@ -22,8 +26,14 @@ import java.util.concurrent.ConcurrentHashMap;
  * <br/> Created by piggsoft on 2015/11/16.
  * @author piggsoft@163.com
  */
-public class EventMulticaster {
+@Component
+public class EventMulticaster implements InitializingBean {
 
+    /**
+     * wxEventListeners
+     */
+    @Autowired
+    private WXEventListener[] wxEventListeners;
 
     /**
      * 检索器监听
@@ -125,6 +135,20 @@ public class EventMulticaster {
         return (typeArg == null || typeArg.isAssignableFrom(eventType));
     }
 
+    /**
+     * set wxEventListeners
+     * @param wxEventListeners
+     */
+    public void setWxEventListeners(WXEventListener[] wxEventListeners) {
+        this.wxEventListeners = wxEventListeners;
+    }
+
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        for (WXEventListener listener : wxEventListeners) {
+            this.addEventListener(listener);
+        }
+    }
 
     /**
      * @author piggsoft@163.com

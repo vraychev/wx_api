@@ -1,7 +1,7 @@
 package com.piggsoft.utils.http;
 
 import com.alibaba.fastjson.JSON;
-import com.piggsoft.utils.ObjectUtils;
+import com.piggsoft.exception.HttpException;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -21,6 +21,7 @@ import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.util.ObjectUtils;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -130,7 +131,7 @@ public class HttpUtils {
             }
             List<NameValuePair> nameValuePairs = new ArrayList<NameValuePair>();
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                if (ObjectUtils.isNotEmpty(entry.getValue())) {
+                if (!ObjectUtils.isEmpty(entry.getValue())) {
                     nameValuePairs.add(new BasicNameValuePair(entry.getKey(), String.valueOf(entry.getValue())));
                 }
             }
@@ -175,7 +176,7 @@ public class HttpUtils {
             requestBuilder.setUri(url);
             requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
             for (Map.Entry<String, Object> entry : params.entrySet()) {
-                if (ObjectUtils.isNotEmpty(entry.getValue())) {
+                if (!ObjectUtils.isEmpty(entry.getValue())) {
                     requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
                 }
                 if (LOGGER.isDebugEnabled()) {

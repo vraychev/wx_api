@@ -1,7 +1,7 @@
 package com.piggsoft.event.impl.msg;
 
 import com.piggsoft.event.WXEvent;
-import com.piggsoft.event.annotation.XmlMsgType;
+import com.piggsoft.annotation.XmlMsgType;
 
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;

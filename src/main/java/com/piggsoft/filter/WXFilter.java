@@ -1,16 +1,16 @@
 package com.piggsoft.filter;
 
 import com.alibaba.fastjson.JSON;
-import com.piggsoft.event.EventMulticaster;
+import com.piggsoft.configuration.Context;
+import com.piggsoft.configuration.EventMulticaster;
 import com.piggsoft.event.WXEvent;
-import com.piggsoft.event.annotation.parser.Parser;
+import com.piggsoft.annotation.parser.Parser;
 import com.piggsoft.listener.WXEventListener;
-import com.piggsoft.utils.config.ConfigUtils;
-import org.apache.commons.configuration.Configuration;
-import org.apache.commons.configuration.HierarchicalConfiguration;
-import org.apache.commons.configuration.XMLConfiguration;
+import org.apache.commons.lang3.ArrayUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.context.ApplicationContext;
 import org.springframework.util.StreamUtils;
 
 import javax.servlet.Filter;
@@ -22,7 +22,6 @@ import javax.servlet.ServletResponse;
 import javax.xml.bind.JAXB;
 import java.io.IOException;
 import java.nio.charset.Charset;
-import java.util.List;
 
 /**
  * WX 拦截器
@@ -37,53 +36,44 @@ public class WXFilter implements Filter {
     private static final Logger LOGGER = LoggerFactory.getLogger(WXFilter.class);
 
     /**
-     * 配置文件的路径，默认是classpath下
+     * 默认配置地址
      */
-    private static String WX_CONFIG_FILE = ConfigUtils.getConfig().getString("wx_config_file");
+    private static final String DEFAULT_CONFIG_LOCATION = "classpath*:wx.spring.xml";
+
+    /**
+     * 默认配置地址
+     */
+    private static final String CUSTOMER_CONFIG_LOCATION = "classpath*:wx.customer.spring.xml";
 
     /**
      * 事件分发器
      */
-    private EventMulticaster multicaster = new EventMulticaster();
+    private EventMulticaster multicaster;
+
+    /**
+     * 被动报文解析
+     */
+    private Parser parser;
 
     //多线程任务管理器
     //private static final ExecutorService service = Executors.newCachedThreadPool();
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
-        init();
-
+        String configLocations = filterConfig.getInitParameter("wxConfigLocations");
+        if (StringUtils.isEmpty(configLocations)) {
+            Context.init(new String[]{DEFAULT_CONFIG_LOCATION, CUSTOMER_CONFIG_LOCATION});
+        } else {
+            String[] locations = StringUtils.split(configLocations, ",");
+            ArrayUtils.add(locations, 0,  DEFAULT_CONFIG_LOCATION);
+            Context.init(locations);
+        }
+        ApplicationContext applicationContext = Context.getContext();
+        multicaster = applicationContext.getBean(EventMulticaster.class);
+        parser = applicationContext.getBean(Parser.class);
     }
 
-    /**
-     * 进行出事化工作
-     * <br>读取配置文件，加载listener缓存
-     */
-    public void init() {
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("WXFilter 开始初始化");
-        }
-        Configuration configuration = ConfigUtils.getConfig(WX_CONFIG_FILE);
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("读取配置xml文件完成");
-        }
-        if (null == configuration) {
-            LOGGER.error("读取配置xml文件失败");
-            return;
-        }
-        XMLConfiguration xmlConfig = (XMLConfiguration)configuration;
-        List<HierarchicalConfiguration> hierarchicalConfigurations = xmlConfig.configurationsAt("listeners.listener");
-        for (HierarchicalConfiguration hierarchicalConfiguration : hierarchicalConfigurations) {
-            String listenerClazzName = hierarchicalConfiguration.getString("");
-            multicaster.addEventListenerBean(listenerClazzName);
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Listener {} 注册完成", listenerClazzName);
-            }
-        }
-        if (LOGGER.isDebugEnabled()) {
-            LOGGER.debug("WXFilter 初始化结束");
-        }
-    }
+
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
         String content = StreamUtils.copyToString(servletRequest.getInputStream(), Charset.forName("UTF-8"));
@@ -91,7 +81,7 @@ public class WXFilter implements Filter {
             LOGGER.debug("接收到的报文为：\r\n{}\r\n", content);
         }
         //解析接收的消息
-        WXEvent event = Parser.parse(content);
+        WXEvent event = parser.parse(content);
         if (LOGGER.isDebugEnabled()) {
             LOGGER.debug("接收到的报文为序列化后：\r\n{}\r\n", JSON.toJSONString(event));
         }

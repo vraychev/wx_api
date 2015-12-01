@@ -3,11 +3,11 @@ package com.piggsoft.action;
 import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
-import com.piggsoft.action.exception.ValidateException;
+import com.piggsoft.exception.ValidateException;
 import com.piggsoft.message.req.Req;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
-import com.piggsoft.utils.http.UrlManager;
+import com.piggsoft.manager.UrlManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 
@@ -17,6 +17,9 @@ import org.apache.commons.lang3.StringUtils;
  */
 public abstract class Action {
 
+    /**
+     * 成功code集合
+     */
     private static final String[] SUCCESS_CODES = {"0"};
 
     /**
@@ -25,12 +28,6 @@ public abstract class Action {
      * @return 完整url
      */
     protected abstract String getUrl();
-
-    /**
-     * 获取本次操作需要传说的参数
-     * @return 装载参数的req
-     */
-    protected abstract Req getReq();
 
     /**
      * 获取http的方式
@@ -47,13 +44,13 @@ public abstract class Action {
     /**
      * 执行操作
      * <br/>抽象基本方法
+     * @param req 参数
      * @param <T> 类型判定
      * @return 解析后的结果
      * @throws ValidateException 当微信返回错误信息时抛出
      */
-    public <T> T action() throws ValidateException {
+    public <T> T action(Req req) throws ValidateException {
         String url = getUrl();
-        Req req = getReq();
         HttpMethod method = getHttpMethod();
         preAction(url, req, method);
         String result = null;

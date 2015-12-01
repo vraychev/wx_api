@@ -1,4 +1,4 @@
-package com.piggsoft.event.annotation.parser;
+package com.piggsoft.annotation.parser;
 
 import org.springframework.beans.factory.BeanDefinitionStoreException;
 import org.springframework.context.ResourceLoaderAware;

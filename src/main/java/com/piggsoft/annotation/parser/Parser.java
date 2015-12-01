@@ -1,17 +1,19 @@
-package com.piggsoft.event.annotation.parser;
+package com.piggsoft.annotation.parser;
 
+import com.piggsoft.annotation.XmlMsgType;
 import com.piggsoft.event.WXEvent;
-import com.piggsoft.event.annotation.XmlMsgType;
 import com.piggsoft.utils.bean.BeanUtils;
 import com.piggsoft.utils.bean.Xml2MapUtils;
-import com.piggsoft.utils.config.ConfigUtils;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+import org.springframework.util.ConcurrentReferenceHashMap;
 
-import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
@@ -20,7 +22,8 @@ import java.util.Set;
  * <br>Created by user on 2015/11/18.
  * @author piggsoft@163.com
  */
-public class Parser {
+@Component
+public class Parser implements InitializingBean{
 
     /**
      * logger
@@ -30,44 +33,46 @@ public class Parser {
     /**
      * type == event 即为事件类型
      */
-    public static final String EVENT_TYPE = "event";
+    private static final String EVENT_TYPE = "event";
 
     /**
      * 消息的解析缓存
      */
-    public static final Map<String, Class> MSG_CACHE = new HashMap<String, Class>();
+    private Map<String, Class> msgCache = new ConcurrentReferenceHashMap<String, Class>();
     /**
      * 事件的解析缓存
      */
-    public static final Map<String, Class> EVENT_CACHE = new HashMap<String, Class>();
+    private Map<String, Class> eventCache = new ConcurrentReferenceHashMap<String, Class>();
     /**
      * 事件非空条件的解析缓存
      */
-    public static final Map<String, String[]> EVENT_CONDITION_CACHE = new HashMap<String, String[]>();
+    private Map<String, String[]> eventConditionCache = new ConcurrentReferenceHashMap<String, String[]>();
 
-    static {
-        initCache();
-    }
+    /**
+     * 事件base包
+     */
+    @Value("${event.package}")
+    private String eventPackage;
 
     /**
      * 对报文进行解析
      * @param content 消息
      * @return 解析后{@link WXEvent}
      */
-    public static WXEvent parse(String content) {
+    public WXEvent parse(String content) {
         Map<String, String> msg = Xml2MapUtils.xml2Map(content, "xml");
         String msgType = msg.get("msgType");
         String eventType = msg.get("event");
         //是推送事件
         if (EVENT_TYPE.equals(msgType) && StringUtils.isNotEmpty(eventType)) {
-            String[] eventConditions = EVENT_CONDITION_CACHE.get(eventType);
+            String[] eventConditions = eventConditionCache.get(eventType);
             //根据事件类型和时间条件来判断具体是哪个事件
             Class clazz = getEventClass(msg, eventType, eventConditions);
             return createBean(clazz, msg);
 
         } else { //是消息
             //从cache中取到对应的class
-            Class clazz = MSG_CACHE.get(msgType);
+            Class clazz = msgCache.get(msgType);
             return createBean(clazz, msg);
 
         }
@@ -80,7 +85,7 @@ public class Parser {
      * @param event_conditions 事件条件
      * @return 对应的事件
      */
-    private static Class getEventClass(Map<String, String> msg, String eventType, String[] event_conditions) {
+    private Class getEventClass(Map<String, String> msg, String eventType, String[] event_conditions) {
         if (ArrayUtils.isNotEmpty(event_conditions)) {
             boolean isValidate = true;
             for (String condition : event_conditions) {
@@ -90,12 +95,12 @@ public class Parser {
                 }
             }
             if (isValidate) {
-                return EVENT_CACHE.get(eventType + "," + StringUtils.join(event_conditions, ","));
+                return eventCache.get(eventType + "," + StringUtils.join(event_conditions, ","));
             } else {
-                return EVENT_CACHE.get(eventType);
+                return eventCache.get(eventType);
             }
         } else {
-            return EVENT_CACHE.get(eventType);
+            return eventCache.get(eventType);
         }
     }
 
@@ -105,19 +110,18 @@ public class Parser {
      * @param msg 解析成map的消息
      * @return {@link WXEvent}
      */
-    private static WXEvent createBean(Class clazz, Map<String, String> msg) {
+    private WXEvent createBean(Class clazz, Map<String, String> msg) {
         if (clazz == null) {
             return null;
         }
-        WXEvent wxEvent = (WXEvent) BeanUtils.mapToBean(clazz, msg);
-        return wxEvent;
+        return (WXEvent) BeanUtils.mapToBean(clazz, msg);
     }
 
 
     /**
      * 初始化缓存
      */
-    private static void initCache() {
+    private void initCache() {
         Set<Class> classes = scanFieldClass();
         if (CollectionUtils.isEmpty(classes)) {
             return;
@@ -130,13 +134,13 @@ public class Parser {
                 if (ArrayUtils.isNotEmpty(xmlMsgType.eventCondition())) {
                     String condition = StringUtils.join(xmlMsgType.eventCondition(), ",");
                     //cache中放入对照关系
-                    EVENT_CACHE.put(xmlMsgType.eventType() + "," + condition, clazz);
-                    EVENT_CONDITION_CACHE.put(xmlMsgType.eventType(), xmlMsgType.eventCondition());
+                    eventCache.put(xmlMsgType.eventType() + "," + condition, clazz);
+                    eventConditionCache.put(xmlMsgType.eventType(), xmlMsgType.eventCondition());
                 } else {
-                    EVENT_CACHE.put(xmlMsgType.eventType(), clazz);
+                    eventCache.put(xmlMsgType.eventType(), clazz);
                 }
             } else {
-                MSG_CACHE.put(xmlMsgType.msgType(), clazz);
+                msgCache.put(xmlMsgType.msgType(), clazz);
             }
         }
     }
@@ -145,8 +149,13 @@ public class Parser {
      * 根据配置，扫描指定包下面的类，找到所有 标有{@link XmlMsgType}注解的类
      * @return {@link Set<Class>}
      */
-    private static Set<Class> scanFieldClass() {
-        return ClassScaner.scan(ConfigUtils.getConfig().getString("event.package"), XmlMsgType.class);
+    @SuppressWarnings({"unchecked"})
+    private Set<Class> scanFieldClass() {
+        return ClassScaner.scan(eventPackage, XmlMsgType.class);
     }
 
+    @Override
+    public void afterPropertiesSet() throws Exception {
+        initCache();
+    }
 }

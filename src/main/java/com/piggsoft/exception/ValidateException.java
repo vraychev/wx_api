@@ -1,4 +1,4 @@
-package com.piggsoft.action.exception;
+package com.piggsoft.exception;
 
 /**
  * Created by user on 2015/11/24.
