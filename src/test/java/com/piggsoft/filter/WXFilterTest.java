@@ -10,9 +10,11 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.util.ResourceUtils;
+import org.springframework.web.context.WebApplicationContext;
 
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletInputStream;
 import javax.servlet.ServletOutputStream;
@@ -20,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Enumeration;
 
 import static org.easymock.EasyMock.*;
 import static org.easymock.EasyMock.expect;
@@ -42,6 +45,8 @@ public class WXFilterTest {
     private FilterConfig mockConfig;
     @Mock
     private FilterChain mockFilterChain;
+    @Mock
+    private ServletContext servletContext;
 
     @TestSubject
     private WXFilter wxFilter = new WXFilter();
@@ -55,6 +60,33 @@ public class WXFilterTest {
 
     private void refreshContext() throws IOException {
         final InputStream in = ResourceUtils.getURL("classpath:test.xml").openStream();
+
+        expect(servletContext.getAttribute(WebApplicationContext.ROOT_WEB_APPLICATION_CONTEXT_ATTRIBUTE))
+                .andReturn(null)
+                .times(1, 2);
+
+        expect(servletContext.getAttributeNames())
+                .andReturn(new Enumeration<String>() {
+                    @Override
+                    public boolean hasMoreElements() {
+                        return false;
+                    }
+
+                    @Override
+                    public String nextElement() {
+                        return null;
+                    }
+                })
+                .times(1, 2);
+
+        expect(mockConfig.getServletContext())
+                .andReturn(servletContext)
+                .times(1, 2);
+
+        expect(mockConfig.getInitParameter("wxConfigLocations"))
+                .andReturn(null)
+                .times(1, 2);
+
         expect(mockRequest.getInputStream())
                 .andReturn(new ServletInputStream() {
                     @Override
@@ -73,7 +105,8 @@ public class WXFilterTest {
                 })
                 .times(1, 2);
 
-
+        replay(servletContext);
+        replay(mockConfig);
         replay(mockRequest);                    //回放
         replay(mockResponse);
     }
