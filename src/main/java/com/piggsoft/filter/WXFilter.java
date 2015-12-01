@@ -12,6 +12,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.util.StreamUtils;
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -60,14 +62,16 @@ public class WXFilter implements Filter {
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
+        WebApplicationContext parent = WebApplicationContextUtils.findWebApplicationContext(filterConfig.getServletContext());
         String configLocations = filterConfig.getInitParameter("wxConfigLocations");
         if (StringUtils.isEmpty(configLocations)) {
-            Context.init(new String[]{DEFAULT_CONFIG_LOCATION, CUSTOMER_CONFIG_LOCATION});
+            Context.init(new String[]{DEFAULT_CONFIG_LOCATION, CUSTOMER_CONFIG_LOCATION}, parent);
         } else {
             String[] locations = StringUtils.split(configLocations, ",");
             ArrayUtils.add(locations, 0,  DEFAULT_CONFIG_LOCATION);
-            Context.init(locations);
+            Context.init(locations, parent);
         }
+
         ApplicationContext applicationContext = Context.getContext();
         multicaster = applicationContext.getBean(EventMulticaster.class);
         parser = applicationContext.getBean(Parser.class);
