@@ -10,6 +10,8 @@ import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.springframework.retry.annotation.Recover;
+import org.springframework.retry.annotation.Retryable;
 
 import java.net.URI;
 
@@ -51,6 +53,7 @@ public abstract class Action {
      * @return 解析后的结果
      * @throws ValidateException 当微信返回错误信息时抛出
      */
+    @Retryable(value = {Throwable.class})
     public <T> T action(Req req) throws ValidateException {
         URI uri = getUri();
         HttpMethod method = getHttpMethod();
@@ -67,7 +70,7 @@ public abstract class Action {
                 break;
         }
         JSONObject jsonObject = JSON.parseObject(result);
-        validate(jsonObject);
+        validate(req, jsonObject);
         Object o = TypeUtils.castToJavaBean(jsonObject, getResultType());
         return postAction(o);
     }
@@ -89,12 +92,19 @@ public abstract class Action {
     protected void preAction(URI uri, Req req, HttpMethod method) {
     }
 
+    @Recover
+    public <T> T logException(Throwable e) {
+        System.out.println(e.getMessage());
+        return null;
+    }
+
     /**
      * 验证返回的结果
+     * @param req 本次请求的req
      * @param jsonObject 返回的结果
      * @throws ValidateException 当微信返回错误信息时抛出
      */
-    protected void validate(JSONObject jsonObject) throws ValidateException {
+    protected void validate(Req req, JSONObject jsonObject) throws ValidateException {
         String errcode = jsonObject.getString("errcode");
         if (StringUtils.isNotEmpty(errcode) && !ArrayUtils.contains(SUCCESS_CODES, errcode)) {
             String errmsg = jsonObject.getString("errmsg");

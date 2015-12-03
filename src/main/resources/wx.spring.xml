@@ -3,12 +3,15 @@
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
        xmlns:context="http://www.springframework.org/schema/context"
        xmlns:util="http://www.springframework.org/schema/util"
+       xmlns:aop="http://www.springframework.org/schema/aop"
        xsi:schemaLocation="http://www.springframework.org/schema/beans
         http://www.springframework.org/schema/beans/spring-beans.xsd
         http://www.springframework.org/schema/context
 		http://www.springframework.org/schema/context/spring-context.xsd
 		http://www.springframework.org/schema/util
-		http://www.springframework.org/schema/util/spring-util.xsd">
+		http://www.springframework.org/schema/util/spring-util.xsd
+		http://www.springframework.org/schema/aop
+		http://www.springframework.org/schema/aop/spring-aop.xsd">
 
     <util:properties id="properties" location="classpath*:wx.properties, classpath*:wx.customer.properties" local-override="true" ignore-resource-not-found="true"/>
 
@@ -16,5 +19,17 @@
 
     <context:component-scan base-package="com.piggsoft"/>
 
+    <!--<aop:config>
+        <aop:pointcut id="retry"
+                      expression="execution(* com..*Action.action(..))" />
+        <aop:advisor pointcut-ref="retry"
+                     advice-ref="retryAdvice" order="-1"/>
 
+    </aop:config>
+    <bean id="retryAdvice"
+          class="org.springframework.retry.interceptor.RetryOperationsInterceptor"/>-->
+
+
+    <aop:aspectj-autoproxy/>
+    <bean class="org.springframework.retry.annotation.RetryConfiguration" init-method="init"/>
 </beans>
