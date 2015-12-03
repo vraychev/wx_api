@@ -8,6 +8,4 @@ import com.piggsoft.annotation.ActionType;
  */
 @ActionType("token")
 public class TokenReq extends BaseReq {
-
-
 }

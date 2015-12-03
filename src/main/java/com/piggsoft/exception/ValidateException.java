@@ -17,7 +17,7 @@ public class ValidateException extends Exception {
 
 
     public ValidateException(String errcode, String errmsg) {
-        super(errmsg);
+        super(errcode + ":" + errmsg);
         this.errcode = errcode;
         this.errmsg = errmsg;
     }
@@ -26,6 +26,10 @@ public class ValidateException extends Exception {
         super(cause);
         this.errcode = errcode;
         this.errmsg = errmsg;
+    }
+
+    public ValidateException(Throwable cause) {
+        super(cause);
     }
 
     public String getErrcode() {

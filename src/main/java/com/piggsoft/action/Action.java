@@ -4,12 +4,14 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.alibaba.fastjson.util.TypeUtils;
 import com.piggsoft.exception.ValidateException;
+import com.piggsoft.manager.UrlManager;
 import com.piggsoft.message.req.Req;
 import com.piggsoft.utils.http.HttpMethod;
 import com.piggsoft.utils.http.HttpUtils;
-import com.piggsoft.manager.UrlManager;
 import org.apache.commons.lang3.ArrayUtils;
 import org.apache.commons.lang3.StringUtils;
+
+import java.net.URI;
 
 /**
  * Created by user on 2015/11/16.
@@ -27,7 +29,7 @@ public abstract class Action {
      * <br/> 从 {@link UrlManager} 取
      * @return 完整url
      */
-    protected abstract String getUrl();
+    protected abstract URI getUri() throws ValidateException;
 
     /**
      * 获取http的方式
@@ -50,16 +52,16 @@ public abstract class Action {
      * @throws ValidateException 当微信返回错误信息时抛出
      */
     public <T> T action(Req req) throws ValidateException {
-        String url = getUrl();
+        URI uri = getUri();
         HttpMethod method = getHttpMethod();
-        preAction(url, req, method);
+        preAction(uri, req, method);
         String result = null;
         switch (method) {
             case GET :
-                result = HttpUtils.get(url, req.toParams());
+                result = HttpUtils.get(uri, req.toParams());
                 break;
             case POST:
-                result = HttpUtils.post(url, req.toParams());
+                result = HttpUtils.post(uri, req.toString());
                 break;
             default:
                 break;
@@ -80,11 +82,11 @@ public abstract class Action {
 
     /**
      * 请求发出之间的操作
-     * @param url 完整的url
+     * @param uri 完整的url
      * @param req req
      * @param method http method
      */
-    protected void preAction(String url, Req req, HttpMethod method) {
+    protected void preAction(URI uri, Req req, HttpMethod method) {
     }
 
     /**

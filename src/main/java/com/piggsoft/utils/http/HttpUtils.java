@@ -7,6 +7,7 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpPost;
@@ -24,6 +25,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.util.ObjectUtils;
 
 import java.io.*;
+import java.net.URI;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
@@ -83,6 +85,16 @@ public class HttpUtils {
 
     /**
      * post 请求
+     * @param uri 请求地址
+     * @param content post内容
+     * @return response string
+     */
+    public static String post(URI uri, String content) {
+        return post(uri, DEFAULT_ENCODING, null, content);
+    }
+
+    /**
+     * post 请求
      * @param url 请求地址
      * @param charset 字符集
      * @param params 参数
@@ -95,6 +107,18 @@ public class HttpUtils {
 
     /**
      * post 请求
+     * @param uri 请求地址
+     * @param charset 字符集
+     * @param params 参数
+     * @param content post内容
+     * @return response string
+     */
+    public static String post(URI uri, String charset, Map<String, Object> params, String content) {
+        return doPost(uri, charset, params, content);
+    }
+
+    /**
+     * post 请求
      * @param url 请求地址
      * @param charset 字符集
      * @param params 参数
@@ -103,9 +127,22 @@ public class HttpUtils {
      * @return response string
      */
     private static String doPost(String url, String charset, Map<String, Object> params, String content) throws HttpException {
+        return doPost(URI.create(url), charset, params, content);
+    }
+
+    /**
+     * post 请求
+     * @param uri 请求地址
+     * @param charset 字符集
+     * @param params 参数
+     * @param content post内容
+     * @throws HttpException HttpException
+     * @return response string
+     */
+    private static String doPost(URI uri, String charset, Map<String, Object> params, String content) throws HttpException {
         try {
             HttpEntity httpEntity = getEntity(params, content, charset);
-            return post(url, httpEntity);
+            return post(uri, httpEntity);
         } catch (UnsupportedEncodingException e) {
             LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
@@ -172,48 +209,55 @@ public class HttpUtils {
      * @return response string
      */
     public static String get(String url, Map<String, Object> params, String encoding) {
-        CloseableHttpClient httpClient = null;
-        HttpUriRequest get = null;
-        String result = null;
-        try {
-            httpClient = HttpClients.createDefault();
-            RequestBuilder requestBuilder = RequestBuilder.get();
-            requestBuilder.setUri(url);
-            requestBuilder.setHeader("Content-Type", "text/xml;charset=" + encoding);
-            if (null != params && !params.isEmpty()) {
-                for (Map.Entry<String, Object> entry : params.entrySet()) {
-                    if (!ObjectUtils.isEmpty(entry.getValue())) {
-                        requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
-                    }
-                    if (LOGGER.isDebugEnabled()) {
-                        LOGGER.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
-                    }
+        return get(URI.create(url), params, encoding);
+    }
+
+    /**
+     * get 请求
+     * @param uri 请求地址
+     * @param params 参数
+     * @return response string
+     */
+    public static String get(URI uri, Map<String, Object> params) {
+        return get(uri, params, DEFAULT_ENCODING);
+    }
+
+    /**
+     * get 请求
+     * @param uri 请求地址
+     * @return response string
+     */
+    public static String get(URI uri) {
+        return get(uri, null, null);
+    }
+
+    /**
+     * get 请求
+     * @param uri 请求地址
+     * @param params 参数
+     * @param encoding 字符集
+     * @return response string
+     */
+    public static String get(URI uri, Map<String, Object> params, String encoding) {
+        RequestBuilder requestBuilder = RequestBuilder.get();
+        requestBuilder.setUri(uri);
+        String requestEncoding = StringUtils.isEmpty(encoding) ? DEFAULT_ENCODING : encoding;
+        requestBuilder.setHeader("Content-Type", "text/xml;charset=" + requestEncoding);
+        if (null != params && !params.isEmpty()) {
+            for (Map.Entry<String, Object> entry : params.entrySet()) {
+                if (!ObjectUtils.isEmpty(entry.getValue())) {
+                    requestBuilder.addParameter(entry.getKey(), String.valueOf(entry.getValue()));
                 }
-            }
-            get = requestBuilder.build();
-            if (LOGGER.isDebugEnabled()) {
-                LOGGER.debug("Send Request : {}", get.getRequestLine().toString());
-            }
-            /*CloseableHttpResponse response = httpClient.execute(request);
-            HttpEntity entity = response.getEntity();
-            result = EntityUtils.toString(entity, encoding);*/
-            result = httpClient.execute(get, RESPONSE_HANDLER);
-        } catch (ClientProtocolException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new HttpException(e);
-        } catch (IOException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new HttpException(e);
-        } finally {
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
+                if (LOGGER.isDebugEnabled()) {
+                    LOGGER.debug("key : {} ; value : {}", entry.getKey(), String.valueOf(entry.getValue()));
                 }
             }
         }
-        return result;
+        HttpUriRequest get = requestBuilder.build();
+        if (LOGGER.isDebugEnabled()) {
+            LOGGER.debug("Send Request : {}", get.getRequestLine().toString());
+        }
+        return send(get);
     }
 
     /**
@@ -241,37 +285,39 @@ public class HttpUtils {
      * @return response string
      */
     public static String post(String url, HttpEntity entity) {
-        CloseableHttpClient httpClient = null;
-        HttpPost post = null;
+        return post(URI.create(url), entity);
+    }
+
+    /**
+     * post请求
+     * @param uri 请求地址
+     * @param entity {@link HttpEntity}
+     * @return response string
+     */
+    public static String post(URI uri, HttpEntity entity) {
+        HttpPost post = new HttpPost(uri);
+        post.setConfig(CONFIG);
+        post.setEntity(entity);
+        return send(post);
+    }
+
+    /**
+     * 发送请求
+     * @param request 请求
+     * @return 返回结果
+     */
+    private static String send(HttpUriRequest request) {
         String responseMessage = null;
+        CloseableHttpClient httpClient = null;
         try {
+            if (LOGGER.isDebugEnabled()) {
+                LOGGER.debug("Send Request : {}", request.getRequestLine().toString());
+            }
             httpClient = HttpClients.createDefault();
-            post = new HttpPost(url);
-            post.setConfig(CONFIG);
-            post.setEntity(entity);
-            //不能加上Content-Type,加上后台servlet不会解析参数
-            //post.setHeader("Content-Type", "text/xml;charset=" + charset);
-            /*CloseableHttpResponse response = httpClient.execute(post);
-            responseMessage = EntityUtils.toString(response.getEntity(), Charset.forName(charset));*/
-            responseMessage = httpClient.execute(post, RESPONSE_HANDLER);
-        } catch (ClientProtocolException e) {
-            LOGGER.error(e.getMessage(), e);
-            throw new HttpException(e);
+            responseMessage = httpClient.execute(request, RESPONSE_HANDLER);
         } catch (IOException e) {
             LOGGER.error(e.getMessage(), e);
             throw new HttpException(e);
-        } finally {
-            if (post != null) {
-                post.releaseConnection();
-            }
-            if (httpClient != null) {
-                try {
-                    httpClient.close();
-                } catch (IOException e) {
-                    LOGGER.error(e.getMessage(), e);
-                    throw new HttpException(e);
-                }
-            }
         }
         return responseMessage;
     }

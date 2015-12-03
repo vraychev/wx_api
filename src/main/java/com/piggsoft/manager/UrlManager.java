@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 
 /**
  * @author piggsoft@163.com
@@ -18,59 +19,74 @@ import java.net.URISyntaxException;
 public class UrlManager {
 
     /**
+     *  http 请求编码
+     */
+    @Value("${http_encoding}")
+    private String httpEncoding;
+    /**
      * base路径
      */
-    @Value("${url_wx_base}")
-    private String baseUrl;
+    @Value("${host}")
+    private String host;
 
     /**
      * token 路径
      */
-    @Value("${url_wx_token}")
+    @Value("${path_token}")
     private String tokenUrl;
 
     /**
-     * appid
-     */
-    @Value("${appid}")
-    private String appid;
-    /**
-     * secret
-     */
-    @Value("${secret}")
-    private String secret;
-    /**
      * 客服接口根路径
      */
-    @Value("${url_kf_account}")
+    @Value("${path_kf_account}")
     private String kfAccountUrl;
 
 
-    public String getBaseUrl() {
-        return baseUrl;
+    public String getHost() {
+        return host;
     }
 
-    public void setBaseUrl(String baseUrl) {
-        this.baseUrl = baseUrl;
+    public void setHost(String host) {
+        this.host = host;
+    }
+
+    public String getKfAccountUrl() {
+        return kfAccountUrl;
+    }
+
+    public void setKfAccountUrl(String kfAccountUrl) {
+        this.kfAccountUrl = kfAccountUrl;
     }
 
     public String getTokenUrl() {
-        URIBuilder builder = new URIBuilder();
-        builder.setScheme("https")
-            .setHost(baseUrl)
-                .setPath(tokenUrl)
-                .addParameter("appid", appid)
-                .addParameter("secret", secret)
-                .addParameter("grant_type", "client_credential");
-        return builder.toString();
-    }
-
-    public static void main(String[] args) {
-        System.out.println(new UrlManager().getTokenUrl());
+        return tokenUrl;
     }
 
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
     }
 
+    /**
+     * 获取 URIBuilder，已加入 scheme， host， encoding
+     * @return {@link URIBuilder}
+     */
+    public URIBuilder getUriBuilder() {
+        URIBuilder builder = new URIBuilder();
+        builder.setScheme("https")
+                .setHost(host)
+                .setCharset(Charset.forName(httpEncoding));
+        return builder;
+    }
+
+    /**
+     * 获取 URIBuilder，已加入 scheme， host， encoding
+     * @return {@link URIBuilder}
+     * @throws URISyntaxException URISyntaxException
+     */
+    public URI getDefaultUri(String path) throws URISyntaxException {
+        URIBuilder builder = getUriBuilder();
+        builder.setPath(path)
+                .setParameter("access_token", AccessTokenManager.getAccessToken());
+        return builder.build();
+    }
 }
