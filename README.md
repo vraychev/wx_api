@@ -1,6 +1,7 @@
 #微信SDK
 
 ##写在之前
+QQ群：451700092
 * [微信公众平台开发者文档](http://mp.weixin.qq.com/wiki/home/index.html)
 * [Demo](http://git.oschina.net/piggsoft/WX_API_demo)  
 
