@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.piggsoft.configuration.ActionMulticaster;
 import com.piggsoft.configuration.Context;
 import com.piggsoft.exception.ValidateException;
+import com.piggsoft.message.req.GetKfListReq;
 import com.piggsoft.message.req.KfAccountAddReq;
 import com.piggsoft.message.res.BaseRes;
 import org.apache.commons.codec.digest.DigestUtils;
@@ -31,9 +32,18 @@ public class ActionTest {
     public void testKfAccountAddAction() throws ValidateException {
         ActionMulticaster multicaster = Context.getContext().getBean(ActionMulticaster.class);
         KfAccountAddReq req = new KfAccountAddReq();
-        req.setKfAccount("piggsoft");
-        req.setNickname("客服1");
+        req.setKfAccount("test@gh_ed595887caa3");
+        req.setNickname("客服");
         req.setPassword(DigestUtils.md5Hex("123456q"));
+        BaseRes res = multicaster.multicast(req);
+        System.out.println(JSON.toJSONString(res));
+    }
+
+
+    @Test
+    public void testGetKfListAction() throws ValidateException {
+        ActionMulticaster multicaster = Context.getContext().getBean(ActionMulticaster.class);
+        GetKfListReq req = new GetKfListReq();
         BaseRes res = multicaster.multicast(req);
         System.out.println(JSON.toJSONString(res));
     }

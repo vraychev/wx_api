@@ -4,23 +4,21 @@ import com.piggsoft.action.Action;
 import com.piggsoft.annotation.ActionType;
 import com.piggsoft.exception.ValidateException;
 import com.piggsoft.manager.UrlManager;
-import com.piggsoft.message.res.BaseRes;
+import com.piggsoft.message.res.GetKfListRes;
 import com.piggsoft.utils.http.HttpMethod;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.net.URI;
-import java.net.URISyntaxException;
 
 /**
- * 添加客服帐号
- * <br>Created by user on 2015/12/01
+ * <br>Created by fire pigg on 2015/12/08.
+ *
  * @author piggsoft@163.com
  */
 @Component
-@ActionType("kfAccountAdd")
-public class KfAccountAddAction extends Action {
-
+@ActionType("kfList")
+public class GetKfListAction extends Action {
 
     /**
      * url 管理器
@@ -28,20 +26,19 @@ public class KfAccountAddAction extends Action {
     @Autowired
     private UrlManager urlManager;
 
-
     @Override
     protected URI getUri() {
-        return urlManager.getDefaultUri(urlManager.getKfAccountUrl(), "add");
+        return urlManager.getDefaultUri(urlManager.getCgiPath(), "customservice", "getkflist");
     }
 
     @Override
     protected HttpMethod getHttpMethod() {
-        return HttpMethod.POST;
+        return HttpMethod.GET;
     }
 
     @Override
     protected Class getResultType() {
-        return BaseRes.class;
+        return GetKfListRes.class;
     }
 
     @Override

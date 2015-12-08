@@ -2,11 +2,11 @@ package com.piggsoft.action.impl;
 
 import com.piggsoft.action.Action;
 import com.piggsoft.annotation.ActionType;
-import com.piggsoft.exception.ValidateException;
+import com.piggsoft.manager.UrlManager;
 import com.piggsoft.message.res.AccessToken;
 import com.piggsoft.utils.http.HttpMethod;
-import com.piggsoft.manager.UrlManager;
-import org.apache.http.client.utils.URIBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -23,6 +23,10 @@ import java.net.URISyntaxException;
 @ActionType("token")
 public class TokenAction extends Action {
 
+    /**
+     * logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(TokenAction.class);
 
     /**
      * appid
@@ -42,7 +46,7 @@ public class TokenAction extends Action {
 
 
     @Override
-    protected URI getUri() throws ValidateException {
+    protected URI getUri(){
         try {
             return urlManager.getUriBuilder()
                     .setPath(urlManager.getTokenUrl())
@@ -51,8 +55,9 @@ public class TokenAction extends Action {
                     .addParameter("grant_type", "client_credential")
                     .build();
         } catch (URISyntaxException e) {
-            throw new ValidateException(e);
+            LOGGER.error(e.getMessage(), e);
         }
+        return null;
     }
 
     @Override

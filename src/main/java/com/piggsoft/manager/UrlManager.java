@@ -1,8 +1,9 @@
 package com.piggsoft.manager;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.http.client.utils.URIBuilder;
-import org.apache.http.conn.SchemePortResolver;
-import org.apache.http.conn.scheme.Scheme;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
@@ -19,6 +20,11 @@ import java.nio.charset.Charset;
 public class UrlManager {
 
     /**
+     * logger
+     */
+    private static final Logger LOGGER = LoggerFactory.getLogger(UrlManager.class);
+
+    /**
      *  http 请求编码
      */
     @Value("${http_encoding}")
@@ -29,6 +35,16 @@ public class UrlManager {
     @Value("${host}")
     private String host;
 
+    /**
+     * cig路径
+     */
+    @Value("${path_cgi}")
+    private String cgiPath;
+    /**
+     * 自助服务路径
+     */
+    @Value("${path_customservice}")
+    private String customservicePath;
     /**
      * token 路径
      */
@@ -51,7 +67,7 @@ public class UrlManager {
     }
 
     public String getKfAccountUrl() {
-        return kfAccountUrl;
+        return customservicePath + kfAccountUrl;
     }
 
     public void setKfAccountUrl(String kfAccountUrl) {
@@ -59,11 +75,27 @@ public class UrlManager {
     }
 
     public String getTokenUrl() {
-        return tokenUrl;
+        return cgiPath + tokenUrl;
     }
 
     public void setTokenUrl(String tokenUrl) {
         this.tokenUrl = tokenUrl;
+    }
+
+    public String getCgiPath() {
+        return cgiPath;
+    }
+
+    public void setCgiPath(String cgiPath) {
+        this.cgiPath = cgiPath;
+    }
+
+    public String getCustomservicePath() {
+        return customservicePath;
+    }
+
+    public void setCustomservicePath(String customservicePath) {
+        this.customservicePath = customservicePath;
     }
 
     /**
@@ -83,10 +115,17 @@ public class UrlManager {
      * @return {@link URIBuilder}
      * @throws URISyntaxException URISyntaxException
      */
-    public URI getDefaultUri(String path) throws URISyntaxException {
+    public URI getDefaultUri(String... paths) {
         URIBuilder builder = getUriBuilder();
+        String path = StringUtils.join(paths, "/");
         builder.setPath(path)
                 .setParameter("access_token", AccessTokenManager.getAccessToken());
-        return builder.build();
+        try {
+            return builder.build();
+        } catch (URISyntaxException e) {
+            //不应该出错。
+            LOGGER.error(e.getMessage(), e);
+        }
+        return null;
     }
 }
