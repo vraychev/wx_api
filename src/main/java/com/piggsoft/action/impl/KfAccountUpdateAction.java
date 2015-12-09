@@ -12,7 +12,7 @@ import java.net.URI;
 
 /**
  * 修改客服账号
- * Created by user on 2015/12/8.
+ * Created by liukai on 2015/12/8.
  */
 @Component
 @ActionType("kfAccountUpdate")

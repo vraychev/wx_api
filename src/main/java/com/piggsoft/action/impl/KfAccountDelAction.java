@@ -1,9 +1,5 @@
 package com.piggsoft.action.impl;
 
-/**
- * Created by user on 2015/12/9.
- */
-
 import com.piggsoft.action.Action;
 import com.piggsoft.annotation.ActionType;
 import com.piggsoft.manager.UrlManager;
@@ -16,7 +12,7 @@ import java.net.URI;
 
 /**
  * 删除客服账号
- * Created by user on 2015/12/8.
+ * Created by liukai on 2015/12/9.
  */
 @Component
 @ActionType("kfAccountDel")

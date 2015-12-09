@@ -4,6 +4,7 @@ import com.alibaba.fastjson.annotation.JSONField;
 import com.piggsoft.annotation.ActionType;
 
 /**
+ * 修改客服账号
  * Created by user on 2015/12/8.
  */
 @ActionType("kfAccountUpdate")
