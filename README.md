@@ -4,6 +4,7 @@
 QQ群：451700092
 * [微信公众平台开发者文档](http://mp.weixin.qq.com/wiki/home/index.html)
 * [Demo](http://git.oschina.net/piggsoft/WX_API_demo)  
+* [github 开发提交流程](how_to_use_github.md)  
 
 ####Get Start
 1. 引入包
